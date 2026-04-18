@@ -139,7 +139,6 @@
                 </div>
             </div>
 
-            <!-- 点击这个卡片检查线索数量 -->
             <div class="profile-card future-post" id="trueEndingTrigger">
                 <div class="profile-card-header">
                     <span class="profile-id">⚠️ 预 测 记 录 ⚠️</span>
@@ -149,7 +148,7 @@
                     <div class="profile-row"><span class="profile-label">预测事件:</span><span class="profile-value">你将发布一篇帖子</span></div>
                     <div class="profile-row"><span class="profile-label">帖子内容:</span><span class="profile-value">"我不记得自己发过这个。"</span></div>
                     <div class="profile-row"><span class="profile-label">预测置信度:</span><span class="profile-value blink">99.97%</span></div>
-                    <div class="profile-row"><span class="profile-label">📋 线索检查:</span><span class="profile-value" style="color:#ff8200;">点击此卡片查看线索收集进度</span></div>
+                    <div class="profile-row"><span class="profile-label">🔐 真结局入口:</span><span class="profile-value" style="color:#ff8200;">点击此卡片，输入密码解锁真相</span></div>
                 </div>
             </div>
 
@@ -192,15 +191,21 @@
         document.getElementById('clueCount').innerHTML = `<span style="color:#0f0">${clues.length}</span> / 35`;
     }
 
-    // 真结局触发函数（只检查线索，不弹密码）
+    // 真结局触发函数
     function checkTrueEnding() {
         let clues = ClueCollector ? ClueCollector.getCollected() : [];
         let totalNeeded = 35;
         
-        if (clues.length >= totalNeeded) {
-            alert(`✅ 线索已集满！\n\n当前收集：${clues.length} / ${totalNeeded}\n\n请前往07档案触发真结局。`);
-        } else {
+        if (clues.length < totalNeeded) {
             alert(`⚠️ 线索不足！\n\n当前收集：${clues.length} / ${totalNeeded}\n\n请继续探索各平台，收集更多线索。`);
+            return;
+        }
+        
+        let password = prompt('🔐 请输入密码\n\n提示：who is 06？\n（输入06号人物的名字全拼）');
+        if (password && password.toUpperCase() === 'JISHI') {
+            window.location.href = '../../../endings/true_ending.html';
+        } else if (password) {
+            alert('❌ 密码错误。再试试看。');
         }
     }
     
