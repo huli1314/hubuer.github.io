@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>微信 · 业主群</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .wechat-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wechat-header {
+            background: #ededed;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #d9d9d9;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: #000;
+            opacity: 0.7;
+        }
+
+        .group-name {
+            font-size: 17px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .menu-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: #000;
+            opacity: 0.7;
+        }
+
+        .home-link {
+            cursor: pointer;
+            color: #07c160;
+            font-size: 14px;
+            margin-right: 12px;
+            text-decoration: none;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 12px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .time-tag {
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+            margin: 8px 0;
+        }
+
+        .message-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 4px;
+            background: #ccc;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-content {
+            flex: 1;
+            max-width: calc(100% - 52px);
+        }
+
+        .sender-name {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 4px;
+        }
+
+        .bubble {
+            background: #fff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.45;
+            color: #111;
+            word-wrap: break-word;
+            display: inline-block;
+            max-width: 100%;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+        }
+
+        .voice-message {
+            background: #fff;
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .voice-icon {
+            font-size: 18px;
+        }
+
+        .voice-duration {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .voice-wave {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .voice-wave span {
+            width: 3px;
+            height: 12px;
+            background: #07c160;
+            border-radius: 2px;
+            animation: wave 1s ease infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { height: 6px; }
+            50% { height: 14px; }
+        }
+
+        .system-message {
+            text-align: center;
+            font-size: 11px;
+            color: #aaa;
+            margin: 8px 0;
+        }
+
+        .input-bar {
+            background: #f7f7f7;
+            padding: 8px 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            border-top: 1px solid #d9d9d9;
+        }
+
+        .input-field {
+            flex: 1;
+            background: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .voice-btn {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .clue-trigger {
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+<div class="wechat-container">
+    <div class="wechat-header">
+        <div style="display: flex; align-items: center;">
+            <a href="../../../index.html" class="home-link">🏠 返回入口</a>
+            <span class="back-btn" onclick="history.back()">←</span>
+        </div>
+        <span class="group-name">XX花园业主群（187人）</span>
+        <span class="menu-btn">⋯</span>
+    </div>
+
+    <div class="chat-area" id="chatArea">
+        <div class="time-tag">2023年3月12日 周一</div>
+        
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="bubble">各位业主好，今天东门有快递柜维修，麻烦绕行西门。谢谢配合。</div>
+            </div>
+        </div>
+
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/default.jpg" alt="业主" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">业主小李</div>
+                <div class="bubble">收到，辛苦了韩师傅</div>
+            </div>
+        </div>
+
+        <div class="time-tag">2024年5月18日 周六</div>
+        
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="bubble">@所有人 昨晚凌晨3点多，我在监控室发现一段我不记得录过的视频。画面里是我，但那个时间我在睡觉。有没有人懂这个？</div>
+            </div>
+        </div>
+
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/default.jpg" alt="业主" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">业主王姐</div>
+                <div class="bubble">会不会是梦游？</div>
+            </div>
+        </div>
+
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="bubble">我没梦游史。而且监控里我在说话，但我不记得说过那些话。</div>
+            </div>
+        </div>
+
+        <div class="time-tag">2024年8月25日 周日</div>
+        
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="voice-message clue-trigger" onclick="playVoice('laohan_voice_1')">
+                    <span class="voice-icon">🎤</span>
+                    <span class="voice-wave">
+                        <span></span><span></span><span></span><span></span>
+                    </span>
+                    <span class="voice-duration">0:15</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="time-tag">2025年1月15日 周三</div>
+        
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="bubble">凌晨3:14，我又发了一条语音。我不记得自己发过。</div>
+            </div>
+        </div>
+
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="voice-message clue-trigger" onclick="playVoice('laohan_voice_0314')">
+                    <span class="voice-icon">🎤</span>
+                    <span class="voice-wave">
+                        <span></span><span></span><span></span><span></span>
+                    </span>
+                    <span class="voice-duration">0:08</span>
+                    <span style="color:#ff4444; font-size:11px; margin-left:6px;">03:14</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">小远不是远</div>
+                <div class="bubble">韩叔，我也遇到过。贴吧自动发了帖子。</div>
+            </div>
+        </div>
+
+        <div class="time-tag">2025年9月10日 周二</div>
+        
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="bubble">最近越来越不对劲。我老婆说昨晚我跟她说了话，但我完全不记得。我感觉自己在消失。</div>
+            </div>
+        </div>
+
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/default.jpg" alt="业主" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">业主周哥</div>
+                <div class="bubble">老韩你最近是不是压力太大了？</div>
+            </div>
+        </div>
+
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="bubble">不是压力。你们以后还能看到我吗？</div>
+            </div>
+        </div>
+
+        <div class="time-tag">2025年11月1日 周六</div>
+        
+        <div class="message-row">
+            <div class="avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ddd'"></div>
+            <div class="message-content">
+                <div class="sender-name">保安老韩</div>
+                <div class="voice-message clue-trigger" onclick="playVoice('laohan_voice_last')">
+                    <span class="voice-icon">🎤</span>
+                    <span class="voice-wave">
+                        <span></span><span></span><span></span><span></span>
+                    </span>
+                    <span class="voice-duration">0:22</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="system-message">
+            ⚠️ 该用户已退出群聊 · 最后活跃：3个月前
+        </div>
+
+        <div class="system-message">
+            —— 以上是历史消息 ——
+        </div>
+    </div>
+
+    <div class="input-bar">
+        <span class="voice-btn">🎤</span>
+        <input type="text" class="input-field" placeholder="无法发送消息，群聊已被锁定" disabled>
+        <span class="voice-btn">😊</span>
+    </div>
+</div>
+
+<script>
+    function playVoice(voiceId) {
+        let clueMap = {
+            'laohan_voice_1': '老韩的语音：我不认识这个人',
+            'laohan_voice_0314': '老韩凌晨3:14的语音',
+            'laohan_voice_last': '老韩消失前的最后一条语音'
+        };
+        
+        let clue = clueMap[voiceId];
+        if (clue) {
+            ClueCollector.add(clue);
+            showToast('🔍 线索已收集: ' + clue);
+        }
+        
+        showToast('🎵 播放语音 (模拟)');
+    }
+    
+    function showToast(msg) {
+        let toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+    
+    let chatArea = document.getElementById('chatArea');
+    if (chatArea) {
+        chatArea.scrollTop = chatArea.scrollHeight;
+    }
+    
+
+</script>
+
+<script src="../../../js/common.js"></script>
+<script src="../../../js/unlock.js"></script>
+<script src="../../../js/meta.js"></script>
+<script src="../../../js/clueCollector.js"></script>
+</body>
+</html>

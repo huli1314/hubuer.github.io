@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>微博 · 沈叙 / 纪时</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: #fff;
+            border-bottom: 1px solid #e6e6e6;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-nav-content {
+            width: 1000px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff8200;
+        }
+
+        .home-link {
+            cursor: pointer;
+            color: #ff8200;
+            font-size: 14px;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            font-size: 16px;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-area .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .user-area .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-area .username {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .search-bar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            border-bottom: 1px solid #e6e6e6;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-bar-content {
+            width: 1000px;
+            padding: 0 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 8px 16px;
+            border: 1px solid #e6e6e6;
+            border-radius: 20px;
+            background: #f5f5f5;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .main-container {
+            width: 1000px;
+            margin: 126px auto 20px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .left-sidebar {
+            width: 220px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .follow-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            cursor: pointer;
+        }
+
+        .follow-item:hover {
+            background: #f5f5f5;
+        }
+
+        .follow-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .follow-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .follow-info {
+            flex: 1;
+        }
+
+        .follow-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .follow-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .feed {
+            flex: 1;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .weibo-card {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .weibo-card:last-child {
+            border-bottom: none;
+        }
+
+        .card-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .card-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #ddd;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .card-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .card-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .card-content {
+            margin-bottom: 12px;
+            line-height: 1.5;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 40px;
+            padding-top: 8px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .comment-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+            display: none;
+        }
+
+        .comment-section.show {
+            display: block;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ddd;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .comment-time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .right-sidebar {
+            width: 260px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 8px 0;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover {
+            color: #ff8200;
+        }
+
+        .timestamp-0314 {
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .disappeared {
+            background: #fafafa;
+            border: 1px solid #ffcccc;
+        }
+
+        .disappeared .card-name,
+        .disappeared .card-content {
+            color: #999;
+        }
+
+        .clue-trigger {
+            cursor: pointer;
+        }
+        .clue-trigger:hover {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <div class="top-nav-content">
+        <div style="display: flex; align-items: center;">
+            <a href="../../../index.html" class="home-link">🏠 返回入口</a>
+            <div class="logo">微博</div>
+        </div>
+        <div class="nav-links">
+            <a href="#">首页</a>
+            <a href="#">私信</a>
+        </div>
+        <div class="user-area">
+            <div class="avatar"><img src="../../../assets/images/avatars/default.jpg" alt="头像" onerror="this.parentElement.style.background='#ddd'"></div>
+            <span class="username">访客</span>
+        </div>
+    </div>
+</div>
+
+<div class="search-bar">
+    <div class="search-bar-content">
+        <input type="text" class="search-input" placeholder="搜索微博" id="searchInput">
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="left-sidebar">
+        <div class="follow-item" onclick="alert('沈叙的主页 · 最后活跃3个月前')">
+            <div class="follow-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙" onerror="this.style.background='#ddd'"></div>
+            <div class="follow-info">
+                <div class="follow-name">沈叙Shen</div>
+                <div class="follow-desc">程序员 · 最后活跃3个月前</div>
+            </div>
+        </div>
+        <div class="follow-item" onclick="alert('纪时的主页 · 最后活跃2个月前')">
+            <div class="follow-avatar"><img src="../../../assets/images/avatars/jishi.jpg" alt="纪时" onerror="this.style.background='#ddd'"></div>
+            <div class="follow-info">
+                <div class="follow-name">纪时_写字的人</div>
+                <div class="follow-desc">自由撰稿人</div>
+            </div>
+        </div>
+        <div class="follow-item" onclick="alert('程朗心理 · 最后活跃1个月前')">
+            <div class="follow-avatar"><img src="../../../assets/images/avatars/chenglang.jpg" alt="程朗" onerror="this.style.background='#ddd'"></div>
+            <div class="follow-info">
+                <div class="follow-name">程朗心理</div>
+                <div class="follow-desc">心理咨询师</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="feed">
+        <div class="weibo-card">
+            <div class="card-header">
+                <div class="card-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙" onerror="this.style.background='#ddd'"></div>
+                <div class="card-info">
+                    <div class="card-name">沈叙Shen</div>
+                    <div class="card-time">2023-01-12 14:23:00 · 来自微博网页版</div>
+                </div>
+            </div>
+            <div class="card-content">新项目上线，连续肝了三天，代码终于跑通了。睡觉睡觉。</div>
+            <div class="card-actions"><div class="action-btn" onclick="toggleComment(this)">💬 评论(3)</div><div class="action-btn">🔄 转发</div><div class="action-btn">❤️ 点赞</div></div>
+            <div class="comment-section"><div class="comment-item"><div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="网友"></div><div class="comment-content"><div class="comment-name">网友A</div><div class="comment-text">加油！</div><div class="comment-time">2023-01-12 15:30</div></div></div></div>
+        </div>
+
+        <div class="weibo-card">
+            <div class="card-header">
+                <div class="card-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙" onerror="this.style.background='#ddd'"></div>
+                <div class="card-info">
+                    <div class="card-name">沈叙Shen</div>
+                    <div class="card-time">2024-03-18 09:47:00 · 来自微博网页版</div>
+                </div>
+            </div>
+            <div class="card-content">有个事很奇怪。早上打开GitHub，发现昨天凌晨3:14我push了一段代码。但那个时间我在睡觉。代码风格像我的，但我完全不记得写过。</div>
+            <div class="card-actions"><div class="action-btn" onclick="toggleComment(this)">💬 评论(12)</div><div class="action-btn">🔄 转发</div><div class="action-btn">❤️ 点赞</div></div>
+            <div class="comment-section">
+                <div class="comment-item"><div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="网友"></div><div class="comment-content"><div class="comment-name">网友B</div><div class="comment-text">会不会是梦游？</div><div class="comment-time">2024-03-18 10:15</div></div></div>
+                <div class="comment-item"><div class="comment-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙"></div><div class="comment-content"><div class="comment-name">沈叙Shen</div><div class="comment-text">回复@网友B: 我没梦游史。而且那段代码逻辑很复杂，梦游写不出来。</div><div class="comment-time">2024-03-18 10:32</div></div></div>
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('沈叙的代码注释：// who is 03?')"><div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="匿名"></div><div class="comment-content"><div class="comment-name">匿名用户</div><div class="comment-text">👉 你查过那个commit的注释吗？里面写着 "// who is 03?"</div><div class="comment-time">2024-03-18 11:00</div></div></div>
+            </div>
+        </div>
+
+        <div class="weibo-card">
+            <div class="card-header">
+                <div class="card-avatar"><img src="../../../assets/images/avatars/jishi.jpg" alt="纪时" onerror="this.style.background='#ddd'"></div>
+                <div class="card-info">
+                    <div class="card-name">纪时_写字的人</div>
+                    <div class="card-time">2024-11-22 22:15:00 · 来自微博weibo.com</div>
+                </div>
+            </div>
+            <div class="card-content">公众号后台显示我昨晚发布了一篇文章。但我没写过。文章内容我完全不认识，但文风确实像我的。有人遇到过这种情况吗？</div>
+            <div class="card-actions"><div class="action-btn" onclick="toggleComment(this)">💬 评论(28)</div><div class="action-btn">🔄 转发</div><div class="action-btn">❤️ 点赞</div></div>
+            <div class="comment-section">
+                <div class="comment-item"><div class="comment-avatar"><img src="../../../assets/images/avatars/jianglei.jpg" alt="姜莱"></div><div class="comment-content"><div class="comment-name">姜莱插画</div><div class="comment-text">我也有过。不记得画过一张图，但那张图确实是我画的。</div><div class="comment-time">2024-11-22 23:00</div></div></div>
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('纪时的文章发布时间是03:14')"><div class="comment-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙"></div><div class="comment-content"><div class="comment-name">沈叙Shen</div><div class="comment-text">回复@纪时_写字的人: 又是凌晨3:14。我查过，你文章发布时间是03:14。</div><div class="comment-time">2024-11-23 08:30</div></div></div>
+            </div>
+        </div>
+
+        <div class="weibo-card">
+            <div class="card-header">
+                <div class="card-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙" onerror="this.style.background='#ddd'"></div>
+                <div class="card-info">
+                    <div class="card-name">沈叙Shen</div>
+                    <div class="card-time"><span class="timestamp-0314">2025-01-15 03:14:00</span> · 来自微博网页版</div>
+                </div>
+            </div>
+            <div class="card-content">我不记得自己发过这条。</div>
+            <div class="card-actions"><div class="action-btn" onclick="toggleComment(this)">💬 评论(47)</div><div class="action-btn">🔄 转发</div><div class="action-btn">❤️ 点赞</div></div>
+            <div class="comment-section">
+                <div class="comment-item"><div class="comment-avatar"><img src="../../../assets/images/avatars/jishi.jpg" alt="纪时"></div><div class="comment-content"><div class="comment-name">纪时_写字的人</div><div class="comment-text">我也在同一时间发了同样的内容。</div><div class="comment-time">2025-01-15 03:15</div></div></div>
+                <div class="comment-item"><div class="comment-avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远"></div><div class="comment-content"><div class="comment-name">小远不是远</div><div class="comment-text">我也是...贴吧也是03:14</div><div class="comment-time">2025-01-15 03:16</div></div></div>
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('凌晨3:14所有人同步发帖')"><div class="comment-avatar"><img src="../../../assets/images/avatars/chenglang.jpg" alt="程朗"></div><div class="comment-content"><div class="comment-name">程朗心理</div><div class="comment-text">这不是巧合。你们应该互相关注一下。等等，你们有没有发现，你们的时间线完全重叠？</div><div class="comment-time">2025-01-15 09:20</div></div></div>
+            </div>
+        </div>
+
+        <div class="weibo-card">
+            <div class="card-header">
+                <div class="card-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙" onerror="this.style.background='#ddd'"></div>
+                <div class="card-info">
+                    <div class="card-name">沈叙Shen</div>
+                    <div class="card-time">2025-10-05 16:22:00 · 来自微博网页版</div>
+                </div>
+            </div>
+            <div class="card-content">最近越来越严重了。GitHub三个月没更新，但我总觉得我还在写代码。同事说没见过我。我开始怀疑自己是不是真的存在。</div>
+            <div class="card-actions"><div class="action-btn" onclick="toggleComment(this)">💬 评论(8)</div><div class="action-btn">🔄 转发</div><div class="action-btn">❤️ 点赞</div></div>
+            <div class="comment-section"><div class="comment-item clue-trigger" onclick="ClueCollector.add('搜沈叙的名字没有任何结果')"><div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="匿名"></div><div class="comment-content"><div class="comment-name">匿名</div><div class="comment-text">快去搜一下你自己的名字。我搜过了，什么都没有。</div><div class="comment-time">2025-10-05 17:00</div></div></div></div>
+        </div>
+
+        <div class="weibo-card">
+            <div class="card-header">
+                <div class="card-avatar"><img src="../../../assets/images/avatars/jishi.jpg" alt="纪时" onerror="this.style.background='#ddd'"></div>
+                <div class="card-info">
+                    <div class="card-name">纪时_写字的人</div>
+                    <div class="card-time">2025-12-20 11:05:00 · 来自微博网页版</div>
+                </div>
+            </div>
+            <div class="card-content">如果有人在看这个账号，请记住：我叫纪时。我是一名自由撰稿人。我不记得自己写过最后那篇文章。如果你找到我，告诉我我是谁。</div>
+            <div class="card-actions"><div class="action-btn" onclick="toggleComment(this)">💬 评论(2)</div><div class="action-btn">🔄 转发</div><div class="action-btn">❤️ 点赞</div></div>
+            <div class="comment-section"><div class="comment-item"><div class="comment-avatar"></div><div class="comment-content"><div class="comment-name">系统提示</div><div class="comment-text">—— 这是最后一条评论 ——</div><div class="comment-time">2025-12-20 11:06</div></div></div></div>
+        </div>
+
+        <div class="weibo-card disappeared">
+            <div class="card-header">
+                <div class="card-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙" onerror="this.style.background='#ddd'"></div>
+                <div class="card-info">
+                    <div class="card-name">沈叙Shen</div>
+                    <div class="card-time">账号已注销 · 最后活跃：3个月前</div>
+                </div>
+            </div>
+            <div class="card-content">⚠️ 根据用户协议，该账号因长期未登录已进入注销流程。用户内容已归档。</div>
+            <div class="card-actions"><div class="action-btn">💬 评论已关闭</div></div>
+        </div>
+    </div>
+
+    <div class="right-sidebar">
+        <div class="sidebar-title">📰 热门新闻</div>
+        <div class="sidebar-link" onclick="alert('某科技公司发布新产品，股价大涨')">某科技公司发布新产品，股价大涨</div>
+        <div class="sidebar-link" onclick="alert('周末票房创新高，国产片领跑')">周末票房创新高，国产片领跑</div>
+        <div class="sidebar-link" onclick="alert('气象台发布高温预警，注意防暑')">气象台发布高温预警，注意防暑</div>
+        <div class="sidebar-link" onclick="alert('某地发现罕见天文现象，引发关注')">某地发现罕见天文现象，引发关注</div>
+        <div class="sidebar-link" onclick="alert('体育赛事：主队绝杀晋级')">体育赛事：主队绝杀晋级</div>
+    </div>
+</div>
+
+<script>
+    // 微博专用的评论切换函数
+    function toggleComment(btn) {
+        // 找到整个微博卡片
+        let card = btn.closest('.weibo-card');
+        if (card) {
+            let commentSection = card.querySelector('.comment-section');
+            if (commentSection) {
+                commentSection.classList.toggle('show');
+            }
+        }
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            let query = this.value.trim();
+            if (query === '沈叙' || query === '沈叙Shen') {
+                alert('未找到相关结果。用户可能已注销或不存在。');
+                ClueCollector.add('搜索“沈叙”无结果');
+            } else {
+                alert('搜索：' + query);
+            }
+        }
+    });
+    
+
+</script>
+
+<script src="../../../js/common.js"></script>
+<script src="../../../js/unlock.js"></script>
+<script src="../../../js/meta.js"></script>
+<script src="../../../js/clueCollector.js"></script>
+</body>
+</html>

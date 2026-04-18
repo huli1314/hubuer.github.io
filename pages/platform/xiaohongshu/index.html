@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>小红书 · 姜莱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-nav-content {
+            width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff2442, #ff6b3d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .home-link {
+            cursor: pointer;
+            color: #ff2442;
+            font-size: 14px;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-icons span {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-area .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ddd;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .user-area .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .search-bar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-bar-content {
+            width: 1200px;
+            padding: 0 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: #f5f5f5;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .main-container {
+            width: 1200px;
+            margin: 128px auto 40px;
+            display: flex;
+            gap: 32px;
+        }
+
+        .profile-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .profile-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #f0f0f0;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            overflow: hidden;
+            background: #ddd;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .profile-desc {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 16px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            padding: 12px 0;
+            border-top: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .profile-bio {
+            margin-top: 16px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .notes-container {
+            flex: 1;
+        }
+
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .notes-tab {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .note-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .note-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .note-image {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        .note-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .note-info {
+            padding: 12px;
+        }
+
+        .note-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .note-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .note-time {
+            font-size: 10px;
+            color: #ccc;
+            margin-top: 8px;
+        }
+
+        .timestamp-0314 {
+            color: #ff2442;
+            font-weight: bold;
+        }
+
+        .disappeared-note {
+            opacity: 0.6;
+            filter: grayscale(0.3);
+            background: #fafafa;
+        }
+
+        .comment-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .comment-overlay.show {
+            display: flex;
+        }
+
+        .comment-modal {
+            width: 400px;
+            max-width: 90%;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .comment-modal h4 {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ddd;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .close-modal {
+            margin-top: 16px;
+            text-align: center;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .clue-trigger {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <div class="top-nav-content">
+        <div style="display: flex; align-items: center;">
+            <a href="../../../index.html" class="home-link">🏠 返回入口</a>
+            <div class="logo">小红书</div>
+        </div>
+        <div class="nav-icons">
+            <span>🏠</span>
+            <span>❤️</span>
+            <span>➕</span>
+        </div>
+        <div class="user-area">
+            <div class="avatar"><img src="../../../assets/images/avatars/default.jpg" alt="头像" onerror="this.parentElement.style.background='#ddd'"></div>
+        </div>
+    </div>
+</div>
+
+<div class="search-bar">
+    <div class="search-bar-content">
+        <input type="text" class="search-input" placeholder="搜索笔记" id="searchInput">
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="profile-sidebar">
+        <div class="profile-card">
+            <div class="profile-avatar"><img src="../../../assets/images/avatars/jianglei.jpg" alt="姜莱" onerror="this.style.background='#ddd'"></div>
+            <div class="profile-name">姜莱插画</div>
+            <div class="profile-desc">自由插画师 · 合作私信</div>
+            <div class="profile-stats">
+                <div class="stat-item"><div class="stat-number">128</div><div class="stat-label">笔记</div></div>
+                <div class="stat-item"><div class="stat-number">1.2w</div><div class="stat-label">粉丝</div></div>
+                <div class="stat-item"><div class="stat-number">89</div><div class="stat-label">关注</div></div>
+            </div>
+            <div class="profile-bio">
+                🎨 记录日常和插画<br>
+                📮 合作私信<br>
+                ⚠️ 最近总是不记得画过什么
+            </div>
+        </div>
+    </div>
+
+    <div class="notes-container">
+        <div class="notes-header">
+            <span class="notes-tab">笔记</span>
+        </div>
+        <div class="notes-grid" id="notesGrid">
+            <div class="note-card" data-note="1">
+                <div class="note-image"><img src="../../../assets/images/posts/jianglei_1.png" alt="插画作品" onerror="this.parentElement.style.background='#ddd'"></div>
+                <div class="note-info">
+                    <div class="note-title">新画的猫咪系列 🐱</div>
+                    <div class="note-meta">❤️ 234  💬 12</div>
+                    <div class="note-time">2023-02-10 15:30</div>
+                </div>
+            </div>
+
+            <div class="note-card" data-note="2">
+                <div class="note-image"><img src="../../../assets/images/posts/jianglei_2.png" alt="奇怪的画" onerror="this.parentElement.style.background='#ddd'"></div>
+                <div class="note-info">
+                    <div class="note-title">有人认识这张图吗？我不记得画过，但草稿箱里有</div>
+                    <div class="note-meta">❤️ 567  💬 89</div>
+                    <div class="note-time">2024-04-02 09:15</div>
+                </div>
+            </div>
+
+            <div class="note-card" data-note="3">
+                <div class="note-image"><img src="../../../assets/images/posts/jianglei_3.png" alt="凌晨的笔记" onerror="this.parentElement.style.background='#ddd'"></div>
+                <div class="note-info">
+                    <div class="note-title"><span class="timestamp-0314">凌晨3:14</span> 我不记得自己发过这个</div>
+                    <div class="note-meta">❤️ 1.2k  💬 234</div>
+                    <div class="note-time">2025-01-15 03:14</div>
+                </div>
+            </div>
+
+            <div class="note-card" data-note="4">
+                <div class="note-image"><img src="../../../assets/images/posts/jianglei_4.png" alt="消失" onerror="this.parentElement.style.background='#ddd'"></div>
+                <div class="note-info">
+                    <div class="note-title">我好像开始忘记事情了。有人记得我吗？</div>
+                    <div class="note-meta">❤️ 89  💬 23</div>
+                    <div class="note-time">2025-09-10 20:45</div>
+                </div>
+            </div>
+
+            <div class="note-card" data-note="5">
+                <div class="note-image"><img src="../../../assets/images/posts/jianglei_5.png" alt="最后" onerror="this.parentElement.style.background='#ddd'"></div>
+                <div class="note-info">
+                    <div class="note-title">如果看到这条，请记住我叫姜莱</div>
+                    <div class="note-meta">❤️ 12  💬 3</div>
+                    <div class="note-time">2025-11-20 14:30</div>
+                </div>
+            </div>
+
+            <div class="note-card disappeared-note" data-note="6">
+                <div class="note-image"><img src="../../../assets/images/posts/placeholder.jpg" alt="账号异常" onerror="this.parentElement.style.background='#ddd'"></div>
+                <div class="note-info">
+                    <div class="note-title" style="color:#999;">⚠️ 该账号因长期未登录已限制展示</div>
+                    <div class="note-meta">最后活跃：3个月前</div>
+                    <div class="note-time">账号状态异常</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="commentOverlay" class="comment-overlay">
+    <div class="comment-modal">
+        <h4>评论</h4>
+        <div id="commentContent"></div>
+        <div class="close-modal" onclick="closeComment()">关闭</div>
+    </div>
+</div>
+
+<script>
+    const commentsData = {
+        1: [
+            { name: "画友小A", text: "好可爱！", avatar: "../../../assets/images/avatars/default.jpg" },
+            { name: "粉丝123", text: "姜莱老师太强了", avatar: "../../../assets/images/avatars/default.jpg" }
+        ],
+        2: [
+            { name: "网友", text: "这张图风格确实像你的", avatar: "../../../assets/images/avatars/default.jpg" },
+            { name: "纪时_写字的人", text: "我也遇到过类似情况，公众号莫名发了文章", avatar: "../../../assets/images/avatars/jishi.jpg" },
+            { name: "沈叙Shen", text: "GitHub也有过，凌晨3:14", avatar: "../../../assets/images/avatars/shenxu.jpg" }
+        ],
+        3: [
+            { name: "纪时_写字的人", text: "又是3:14...", avatar: "../../../assets/images/avatars/jishi.jpg" },
+            { name: "沈叙Shen", text: "我们是不是应该建个群？", avatar: "../../../assets/images/avatars/shenxu.jpg" },
+            { name: "小远不是远", text: "贴吧也是3:14", avatar: "../../../assets/images/avatars/xiaoyuan.jpg" },
+            { name: "程朗心理", text: "时间线完全重叠。你们有没有想过，你们可能是同一个人？", avatar: "../../../assets/images/avatars/chenglang.jpg", class: "clue-trigger", clue: "程朗分析：你们可能是同一个人" }
+        ],
+        4: [
+            { name: "纪时_写字的人", text: "我也快了。感觉自己在消失。", avatar: "../../../assets/images/avatars/jishi.jpg" },
+            { name: "匿名", text: "搜过自己的名字吗？什么都没有。", avatar: "../../../assets/images/avatars/default.jpg", class: "clue-trigger", clue: "搜索姜莱的名字无结果" }
+        ],
+        5: [
+            { name: "系统提示", text: "—— 最后一条评论 ——", avatar: "" }
+        ]
+    };
+
+    document.querySelectorAll('.note-card').forEach((card) => {
+        card.addEventListener('click', function(e) {
+            e.stopPropagation();
+            let noteId = this.getAttribute('data-note');
+            if (noteId && commentsData[noteId]) {
+                showComment(noteId);
+            }
+        });
+    });
+
+    function showComment(noteId) {
+        let comments = commentsData[noteId];
+        let container = document.getElementById('commentContent');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        comments.forEach(comment => {
+            let div = document.createElement('div');
+            div.className = 'comment-item';
+            if (comment.class === 'clue-trigger') {
+                div.classList.add('clue-trigger');
+                div.onclick = () => {
+                    ClueCollector.add(comment.clue);
+                    alert('🔍 发现线索: ' + comment.clue);
+                };
+            }
+            div.innerHTML = `
+                <div class="comment-avatar"><img src="${comment.avatar}" alt="头像" onerror="this.style.background='#ddd'"></div>
+                <div class="comment-content">
+                    <div class="comment-name">${comment.name}</div>
+                    <div class="comment-text">${comment.text}</div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        
+        document.getElementById('commentOverlay').classList.add('show');
+    }
+
+    function closeComment() {
+        document.getElementById('commentOverlay').classList.remove('show');
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            let query = this.value.trim();
+            if (query === '姜莱' || query === '姜莱插画') {
+                alert('未找到相关结果。用户可能已注销或不存在。');
+                ClueCollector.add('搜索“姜莱”无结果');
+            } else if (query) {
+                alert('搜索：' + query);
+            }
+        }
+    });
+
+
+</script>
+
+<script src="../../../js/common.js"></script>
+<script src="../../../js/unlock.js"></script>
+<script src="../../../js/meta.js"></script>
+<script src="../../../js/clueCollector.js"></script>
+</body>
+</html>

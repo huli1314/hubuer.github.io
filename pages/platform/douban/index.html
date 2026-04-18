@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>豆瓣 · 程朗</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .douban-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+        }
+
+        .top-nav {
+            background: #fff;
+            border-bottom: 1px solid #e6e6e6;
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #00b51d;
+        }
+
+        .home-link {
+            cursor: pointer;
+            color: #00b51d;
+            font-size: 14px;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .search-input {
+            width: 200px;
+            padding: 6px 12px;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .profile-header {
+            background: #fff;
+            padding: 24px;
+            border-bottom: 1px solid #e6e6e6;
+            display: flex;
+            gap: 24px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #ddd;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .profile-bio {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e6e6e6;
+            padding: 0 24px;
+            gap: 24px;
+        }
+
+        .tab {
+            padding: 12px 0;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: #00b51d;
+            border-bottom-color: #00b51d;
+        }
+
+        .content-area {
+            padding: 20px 24px;
+        }
+
+        .diary-card {
+            background: #fff;
+            border: 1px solid #e6e6e6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .diary-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            padding: 16px 20px 8px;
+        }
+
+        .diary-meta {
+            font-size: 12px;
+            color: #999;
+            padding: 0 20px 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .diary-content {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .diary-actions {
+            padding: 12px 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .action-btn {
+            cursor: pointer;
+        }
+
+        .comment-section {
+            border-top: 1px solid #f0f0f0;
+            background: #fafafa;
+            display: none;
+        }
+
+        .comment-section.show {
+            display: block;
+        }
+
+        .comment-item {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ddd;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        .comment-time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .item-card {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid #e6e6e6;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: #fff;
+        }
+
+        .item-cover {
+            width: 80px;
+            height: 100px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .item-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .item-rating {
+            font-size: 12px;
+            color: #f5a623;
+            margin-bottom: 6px;
+        }
+
+        .item-review {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .timestamp-0314 {
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .disappeared {
+            background: #fafafa;
+            opacity: 0.7;
+        }
+
+        .clue-trigger {
+            cursor: pointer;
+        }
+        .clue-trigger:hover {
+            background: #f0f0f0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+<div class="douban-container">
+    <div class="top-nav">
+        <div class="nav-content">
+            <div style="display: flex; align-items: center;">
+                <a href="../../../index.html" class="home-link">🏠 返回入口</a>
+                <div class="logo">豆瓣</div>
+            </div>
+            <input type="text" class="search-input" placeholder="搜索" id="searchInput">
+        </div>
+    </div>
+
+    <div class="profile-header">
+        <div class="profile-avatar"><img src="../../../assets/images/avatars/chenglang.jpg" alt="程朗" onerror="this.style.background='#ddd'"></div>
+        <div class="profile-info">
+            <div class="profile-name">程朗心理</div>
+            <div class="profile-bio">心理咨询师 · 存在主义取向<br>“我思故我在？那如果不记得呢？”</div>
+            <div class="profile-stats">
+                <span>关注 234</span>
+                <span>粉丝 1.2k</span>
+                <span>日记 18</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="diary">日记</div>
+        <div class="tab" data-tab="books">读过</div>
+        <div class="tab" data-tab="movies">看过</div>
+    </div>
+
+    <div class="content-area" id="diaryContent">
+        <div class="diary-card">
+            <div class="diary-title">关于存在与焦虑的一些思考</div>
+            <div class="diary-meta">2023-01-15 20:30 · 阅读 45</div>
+            <div class="diary-content">今天和一位来访者聊到了存在焦虑。现代人的孤独感似乎与日俱增，但也许这正是自我觉醒的开始。</div>
+            <div class="diary-actions">
+                <span>❤️ 12</span>
+                <span class="action-btn" onclick="this.closest('.diary-card').querySelector('.comment-section').classList.toggle('show')">💬 评论(3)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="网友"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">读者A</div>
+                        <div class="comment-text">很有启发，谢谢程老师</div>
+                        <div class="comment-time">2023-01-16 10:30</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diary-card">
+            <div class="diary-title">奇怪的来访者</div>
+            <div class="diary-meta">2024-05-20 22:15 · 阅读 89</div>
+            <div class="diary-content">今天接了一个来访者，他叫沈叙。他说他不记得自己写过代码。我做了咨询记录，但今天打开电脑发现那段记录不见了。我不记得自己删过。而且更奇怪的是，我完全不记得这个来访者的样子。</div>
+            <div class="diary-actions">
+                <span>❤️ 23</span>
+                <span class="action-btn" onclick="this.closest('.diary-card').querySelector('.comment-section').classList.toggle('show')">💬 评论(7)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="网友"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">网友</div>
+                        <div class="comment-text">会不会是系统bug？</div>
+                        <div class="comment-time">2024-05-21 09:00</div>
+                    </div>
+                </div>
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('程朗不记得来访者沈叙')">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">沈叙Shen</div>
+                        <div class="comment-text">程医生，你还记得我吗？我来找过你。但你好像不记得了。</div>
+                        <div class="comment-time">2024-05-21 14:30</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diary-card">
+            <div class="diary-title"><span class="timestamp-0314">凌晨3:14</span> 我不记得自己发过这个</div>
+            <div class="diary-meta">2025-01-15 03:14 · 阅读 234</div>
+            <div class="diary-content">我不记得自己发过这条日记。</div>
+            <div class="diary-actions">
+                <span>❤️ 67</span>
+                <span class="action-btn" onclick="this.closest('.diary-card').querySelector('.comment-section').classList.toggle('show')">💬 评论(28)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">沈叙Shen</div>
+                        <div class="comment-text">程医生，你也是3:14？</div>
+                        <div class="comment-time">2025-01-15 03:16</div>
+                    </div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/jianglei.jpg" alt="姜莱"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">姜莱插画</div>
+                        <div class="comment-text">你们都是3:14？我也是。</div>
+                        <div class="comment-time">2025-01-15 03:18</div>
+                    </div>
+                </div>
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('程朗分析：你们可能是同一个人格的不同碎片')">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/chenglang.jpg" alt="程朗"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">程朗心理</div>
+                        <div class="comment-text">等等。你们所有人都在同一时间发帖。作为心理咨询师，我有一个假设：你们可能是同一个人格的不同碎片。</div>
+                        <div class="comment-time">2025-01-15 09:30</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diary-card">
+            <div class="diary-title">关于人格解体的笔记</div>
+            <div class="diary-meta">2025-06-10 19:20 · 阅读 156</div>
+            <div class="diary-content">最近越来越多的人找到我，说他们不记得自己做过某些事。沈叙、姜莱、小远、纪时、老韩。他们互不相识，但症状完全一致。我开始怀疑——他们是不是同一个人？如果是，那我是谁？我为什么会知道他们所有人？</div>
+            <div class="diary-actions">
+                <span>❤️ 34</span>
+                <span class="action-btn" onclick="this.closest('.diary-card').querySelector('.comment-section').classList.toggle('show')">💬 评论(11)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('程朗怀疑自己也是其中一个人格')">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="匿名"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">匿名</div>
+                        <div class="comment-text">你有没有想过，你可能也是他们中的一个？</div>
+                        <div class="comment-time">2025-06-11 08:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diary-card">
+            <div class="diary-title">我搜不到自己了</div>
+            <div class="diary-meta">2025-09-20 15:45 · 阅读 23</div>
+            <div class="diary-content">今天在豆瓣搜了自己的名字“程朗”。没有结果。我让朋友搜，也说没有。我开始怀疑自己是否存在。也许我只是某个人格的一部分，正在被遗忘。</div>
+            <div class="diary-actions">
+                <span>❤️ 8</span>
+                <span class="action-btn" onclick="this.closest('.diary-card').querySelector('.comment-section').classList.toggle('show')">💬 评论(4)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('搜索程朗的名字无结果')">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="匿名"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">匿名</div>
+                        <div class="comment-text">你不是第一个。沈叙也消失了。</div>
+                        <div class="comment-time">2025-09-21 10:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diary-card">
+            <div class="diary-title">如果你在看</div>
+            <div class="diary-meta">2025-11-15 11:30 · 阅读 5</div>
+            <div class="diary-content">我叫程朗，是一名心理咨询师。如果你看到这条日记，请记住我。我不记得自己写过这些。我觉得自己正在消失。下一个可能是你。</div>
+            <div class="diary-actions">
+                <span>❤️ 2</span>
+                <span class="action-btn" onclick="this.closest('.diary-card').querySelector('.comment-section').classList.toggle('show')">💬 评论(1)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item">
+                    <div class="comment-avatar"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">系统提示</div>
+                        <div class="comment-text">—— 该用户已注销，无法评论 ——</div>
+                        <div class="comment-time">2025-11-16 00:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diary-card disappeared">
+            <div class="diary-title" style="color:#999;">⚠️ 账号已注销</div>
+            <div class="diary-meta">最后活跃：3个月前</div>
+            <div class="diary-content" style="color:#999;">根据豆瓣用户协议，该账号因长期未登录已进入注销流程。用户内容已归档。</div>
+            <div class="diary-actions">
+                <span>❤️ --</span>
+                <span>💬 评论已关闭</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-area" id="booksContent" style="display: none;">
+        <div class="item-card">
+            <div class="item-cover"><img src="../../../assets/images/posts/book_cover.jpg" alt="书封" onerror="this.style.background='#ddd'"></div>
+            <div class="item-info">
+                <div class="item-title">《存在与时间》</div>
+                <div class="item-rating">★★★★☆</div>
+                <div class="item-review">重读海德格尔。关于“此在”的论述让我想起最近的工作。一个人如何确认自己存在？</div>
+            </div>
+        </div>
+        <div class="item-card">
+            <div class="item-cover"><img src="../../../assets/images/posts/book_cover2.jpg" alt="书封" onerror="this.style.background='#ddd'"></div>
+            <div class="item-info">
+                <div class="item-title">《24个比利》</div>
+                <div class="item-rating">★★★★★</div>
+                <div class="item-review">多重人格的真实案例。比利不知道自己有24个人格。我突然觉得，也许我也是。</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-area" id="moviesContent" style="display: none;">
+        <div class="item-card">
+            <div class="item-cover"><img src="../../../assets/images/posts/movie_cover.jpg" alt="搏击俱乐部" onerror="this.style.background='#ddd'"></div>
+            <div class="item-info">
+                <div class="item-title">《搏击俱乐部》Fight Club</div>
+                <div class="item-rating">★★★★★</div>
+                <div class="item-review">“你的工作不代表你，你的银行账户不代表你，你开的车不代表你。” 我渐渐理解了。主角和泰勒其实是同一个人。</div>
+            </div>
+        </div>
+        <div class="item-card clue-trigger" onclick="ClueCollector.add('电影《致命ID》多重人格的暗示')">
+            <div class="item-cover"><img src="../../../assets/images/posts/fatal_id.jpg" alt="致命ID" onerror="this.style.background='#ddd'"></div>
+            <div class="item-info">
+                <div class="item-title">《致命ID》Identity</div>
+                <div class="item-rating">★★★★★</div>
+                <div class="item-review">多重人格的经典之作。11个人格在一个旅馆里互相残杀，最后发现他们都是同一个人。和最近遇到的案例太像了。沈叙、姜莱、小远、老韩、纪时...他们会不会也是同一个人？</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            let tabName = this.getAttribute('data-tab');
+            document.getElementById('diaryContent').style.display = tabName === 'diary' ? 'block' : 'none';
+            document.getElementById('booksContent').style.display = tabName === 'books' ? 'block' : 'none';
+            document.getElementById('moviesContent').style.display = tabName === 'movies' ? 'block' : 'none';
+        });
+    });
+
+    let searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                let query = this.value.trim();
+                if (query === '程朗' || query === '程朗心理') {
+                    alert('未找到相关用户。用户可能已注销或不存在。');
+                    ClueCollector.add('搜索“程朗”无结果');
+                } else if (query) {
+                    alert('搜索: ' + query);
+                }
+            }
+        });
+    }
+
+
+</script>
+
+<script src="../../../js/common.js"></script>
+<script src="../../../js/unlock.js"></script>
+<script src="../../../js/meta.js"></script>
+<script src="../../../js/clueCollector.js"></script>
+</body>
+</html>

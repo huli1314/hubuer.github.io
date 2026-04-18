@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>贴吧 · 小远</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #e5e5e5;
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .tieba-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .top-nav {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 8px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4e6ef2;
+        }
+
+        .home-link {
+            cursor: pointer;
+            color: #4e6ef2;
+            font-size: 14px;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-input {
+            width: 250px;
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .search-btn {
+            background: #4e6ef2;
+            color: #fff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .forum-header {
+            background: #fff;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .forum-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .forum-desc {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .post-list {
+            padding: 12px 16px;
+        }
+
+        .post-card {
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #fafafc;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ccc;
+            overflow: hidden;
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-info {
+            flex: 1;
+        }
+
+        .author-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .author-badge {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .post-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .post-content {
+            padding: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .post-images {
+            padding: 0 16px 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .post-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+
+        .post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 24px;
+            padding: 8px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .action-btn {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .reply-section {
+            background: #f8f9fa;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .reply-item {
+            display: flex;
+            gap: 10px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .reply-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ccc;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .reply-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .reply-content {
+            flex: 1;
+        }
+
+        .reply-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .reply-text {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .reply-time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .sub-reply {
+            margin-top: 8px;
+            padding-left: 20px;
+            border-left: 2px solid #e0e0e0;
+        }
+
+        .sub-reply-item {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .sub-reply-name {
+            font-weight: 600;
+            color: #4e6ef2;
+        }
+
+        .timestamp-0314 {
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .disappeared {
+            background: #fafafa;
+            opacity: 0.7;
+        }
+
+        .deleted-badge {
+            color: #999;
+            font-style: italic;
+        }
+
+        .clue-trigger {
+            cursor: pointer;
+        }
+        .clue-trigger:hover {
+            background: #f0f0f0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+<div class="tieba-container">
+    <div class="top-nav">
+        <div class="nav-content">
+            <div style="display: flex; align-items: center;">
+                <a href="../../../index.html" class="home-link">🏠 返回入口</a>
+                <div class="logo">百度贴吧</div>
+            </div>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="搜索本吧" id="searchInput">
+                <button class="search-btn" id="searchBtn">搜索</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="forum-header">
+        <div class="forum-name">抑郁症吧</div>
+        <div class="forum-desc">关注: 12.3w · 帖子: 45.6w</div>
+    </div>
+
+    <div class="post-list" id="postList">
+        
+        <div class="post-card">
+            <div class="post-author">
+                <div class="author-avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远" onerror="this.style.background='#ccc'"></div>
+                <div class="author-info">
+                    <div class="author-name">小远不是远</div>
+                    <div class="author-badge">吧友 · 5级</div>
+                </div>
+                <div class="post-time">2023-02-20 19:30</div>
+            </div>
+            <div class="post-content">最近有点失眠，有没有人也是这样？</div>
+            <div class="post-actions">
+                <span class="action-btn">👍 23</span>
+                <span class="action-btn" onclick="toggleReply(this)">💬 回复(8)</span>
+            </div>
+            <div class="reply-section" style="display: none;">
+                <div class="reply-item">
+                    <div class="reply-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="网友" onerror="this.style.background='#ccc'"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">失眠患者</div>
+                        <div class="reply-text">我也是，试试褪黑素</div>
+                        <div class="reply-time">2023-02-20 20:15</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <div class="post-author">
+                <div class="author-avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远" onerror="this.style.background='#ccc'"></div>
+                <div class="author-info">
+                    <div class="author-name">小远不是远</div>
+                    <div class="author-badge">吧友 · 6级</div>
+                </div>
+                <div class="post-time">2024-04-10 22:15</div>
+            </div>
+            <div class="post-content">出大事了。昨晚凌晨3:14，我的账号自动发了一个帖子。内容是我写的，但我不记得发过。有没有懂技术的帮我看一下？</div>
+            <div class="post-actions">
+                <span class="action-btn">👍 45</span>
+                <span class="action-btn" onclick="toggleReply(this)">💬 回复(23)</span>
+            </div>
+            <div class="reply-section" style="display: none;">
+                <div class="reply-item">
+                    <div class="reply-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="网友" onerror="this.style.background='#ccc'"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">技术宅</div>
+                        <div class="reply-text">可能是被盗号了？</div>
+                        <div class="reply-time">2024-04-10 22:30</div>
+                    </div>
+                </div>
+                <div class="reply-item">
+                    <div class="reply-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙" onerror="this.style.background='#ccc'"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">沈叙Shen</div>
+                        <div class="reply-text">我也遇到过。GitHub自动push了代码，也是3:14。</div>
+                        <div class="reply-time">2024-04-11 09:20</div>
+                    </div>
+                </div>
+                <div class="reply-item clue-trigger" onclick="ClueCollector.add('小远第一次发现账号自动发帖')">
+                    <div class="reply-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="匿名" onerror="this.style.background='#ccc'"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">匿名用户</div>
+                        <div class="reply-text">👉 查一下那个帖子的IP，显示和你发其他帖子的一样。是你自己发的，但你不记得。</div>
+                        <div class="reply-time">2024-04-11 10:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <div class="post-author">
+                <div class="author-avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远" onerror="this.style.background='#ccc'"></div>
+                <div class="author-info">
+                    <div class="author-name">小远不是远</div>
+                    <div class="author-badge">吧友 · 7级</div>
+                </div>
+                <div class="post-time"><span class="timestamp-0314">2025-01-15 03:14:00</span></div>
+            </div>
+            <div class="post-content">我不记得自己发过这个。</div>
+            <div class="post-actions">
+                <span class="action-btn">👍 128</span>
+                <span class="action-btn" onclick="toggleReply(this)">💬 回复(56)</span>
+            </div>
+            <div class="reply-section" style="display: none;">
+                <div class="reply-item">
+                    <div class="reply-avatar"><img src="../../../assets/images/avatars/jishi.jpg" alt="纪时" onerror="this.style.background='#ccc'"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">纪时_写字的人</div>
+                        <div class="reply-text">我也是这个时间发了同样的内容。</div>
+                        <div class="reply-time">2025-01-15 03:16</div>
+                    </div>
+                </div>
+                <div class="reply-item">
+                    <div class="reply-avatar"><img src="../../../assets/images/avatars/jianglei.jpg" alt="姜莱" onerror="this.style.background='#ccc'"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">姜莱插画</div>
+                        <div class="reply-text">小红书也是3:14...</div>
+                        <div class="reply-time">2025-01-15 03:18</div>
+                    </div>
+                </div>
+                <div class="reply-item">
+                    <div class="reply-avatar"><img src="../../../assets/images/avatars/laohan.jpg" alt="老韩" onerror="this.style.background='#ccc'"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">保安老韩</div>
+                        <div class="reply-text">微信群也发了语音。</div>
+                        <div class="reply-time">2025-01-15 03:20</div>
+                    </div>
+                </div>
+                <div class="sub-reply">
+                    <div class="sub-reply-item">
+                        <span class="sub-reply-name">程朗心理:</span>
+                        <span>你们发现了吗？时间完全重叠。建议你们互相联系一下。</span>
+                    </div>
+                    <div class="sub-reply-item clue-trigger" onclick="ClueCollector.add('小远发现时间重叠，搜索沈叙无结果')">
+                        <span class="sub-reply-name">小远不是远:</span>
+                        <span>回复@程朗心理: 我搜了沈叙，搜不到他的任何信息。</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <div class="post-author">
+                <div class="author-avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远" onerror="this.style.background='#ccc'"></div>
+                <div class="author-info">
+                    <div class="author-name">小远不是远</div>
+                    <div class="author-badge">吧友 · 7级</div>
+                </div>
+                <div class="post-time">2025-08-17 14:20</div>
+            </div>
+            <div class="post-content">我搜了自己的名字。什么都没搜到。我同学说没见过我这个人。我是不是不存在？</div>
+            <div class="post-actions">
+                <span class="action-btn">👍 34</span>
+                <span class="action-btn" onclick="toggleReply(this)">💬 回复(12)</span>
+            </div>
+            <div class="reply-section" style="display: none;">
+                <div class="reply-item clue-trigger" onclick="ClueCollector.add('搜索小远的名字无结果')">
+                    <div class="reply-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="匿名" onerror="this.style.background='#ccc'"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">匿名</div>
+                        <div class="reply-text">你不是一个人。我也搜过我自己，什么都没有。</div>
+                        <div class="reply-time">2025-08-17 15:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <div class="post-author">
+                <div class="author-avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远" onerror="this.style.background='#ccc'"></div>
+                <div class="author-info">
+                    <div class="author-name">小远不是远</div>
+                    <div class="author-badge">吧友 · 7级</div>
+                </div>
+                <div class="post-time">2025-10-30 09:45</div>
+            </div>
+            <div class="post-content">如果有人看到这个帖子，请记住：我叫小远，今年17岁，高二。我不记得自己发过最后那个帖子。如果你能找到我，告诉我我还存在。</div>
+            <div class="post-actions">
+                <span class="action-btn">👍 8</span>
+                <span class="action-btn" onclick="toggleReply(this)">💬 回复(3)</span>
+            </div>
+            <div class="reply-section" style="display: none;">
+                <div class="reply-item">
+                    <div class="reply-avatar"></div>
+                    <div class="reply-content">
+                        <div class="reply-name">系统提示</div>
+                        <div class="reply-text">—— 该用户已被屏蔽，无法回复 ——</div>
+                        <div class="reply-time">2025-10-30 10:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-card disappeared">
+            <div class="post-author">
+                <div class="author-avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远" onerror="this.style.background='#ccc'"></div>
+                <div class="author-info">
+                    <div class="author-name">小远不是远</div>
+                    <div class="author-badge deleted-badge">账号已注销</div>
+                </div>
+                <div class="post-time">最后活跃：3个月前</div>
+            </div>
+            <div class="post-content deleted-badge">
+                ⚠️ 根据贴吧协议，该账号因长期未登录已注销。相关帖子已归档。
+            </div>
+            <div class="post-actions">
+                <span class="action-btn">👍 --</span>
+                <span class="action-btn">💬 回复已关闭</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleReply(btn) {
+        let postCard = btn.closest('.post-card');
+        let replySection = postCard.querySelector('.reply-section');
+        if (replySection) {
+            let isShow = replySection.style.display === 'block';
+            replySection.style.display = isShow ? 'none' : 'block';
+        }
+    }
+
+    function searchTieba() {
+        let query = document.getElementById('searchInput').value.trim();
+        if (query === '小远' || query === '小远不是远') {
+            alert('未找到相关用户。账号可能已注销或不存在。');
+            ClueCollector.add('搜索“小远”无结果');
+        } else if (query) {
+            alert('搜索: ' + query + '\n（演示版，无实际搜索结果）');
+        }
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', searchTieba);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') searchTieba();
+    });
+
+
+</script>
+
+<script src="../../../js/common.js"></script>
+<script src="../../../js/unlock.js"></script>
+<script src="../../../js/meta.js"></script>
+<script src="../../../js/clueCollector.js"></script>
+</body>
+</html>

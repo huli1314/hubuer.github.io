@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>加密档案 · 访问受限</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0a; font-family: 'Courier New', Courier, monospace; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .terminal { max-width: 800px; width: 90%; background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 8px; box-shadow: 0 0 30px rgba(0,255,0,0.1); overflow: hidden; }
+        .terminal-bar { background: #1a1a1a; padding: 10px 16px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #2a2a2a; }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; background: #ff5f56; }
+        .terminal-dot:nth-child(2) { background: #ffbd2e; }
+        .terminal-dot:nth-child(3) { background: #27c93f; }
+        .terminal-title { flex: 1; text-align: center; font-size: 12px; color: #666; }
+        .home-link { color: #0f0; font-size: 12px; text-decoration: none; margin-right: 12px; }
+        .home-link:hover { text-decoration: underline; }
+        .terminal-content { padding: 24px; }
+        .lock-screen { text-align: center; }
+        .lock-icon { font-size: 48px; margin-bottom: 20px; }
+        .lock-title { color: #0f0; font-size: 18px; margin-bottom: 8px; }
+        .lock-desc { color: #666; font-size: 12px; margin-bottom: 24px; }
+        .password-input { background: #1a1a1a; border: 1px solid #2a2a2a; padding: 12px 16px; width: 100%; max-width: 300px; color: #0f0; font-family: monospace; font-size: 16px; text-align: center; outline: none; border-radius: 4px; margin-bottom: 16px; }
+        .password-input:focus { border-color: #0f0; }
+        .unlock-btn { background: #1a1a1a; border: 1px solid #2a2a2a; padding: 10px 24px; color: #0f0; font-family: monospace; font-size: 14px; cursor: pointer; border-radius: 4px; }
+        .unlock-btn:hover { background: #0f0; color: #000; border-color: #0f0; }
+        .error-msg { color: #ff4444; font-size: 12px; margin-top: 12px; }
+        .archive-content { display: none; }
+        .archive-header { border-bottom: 1px solid #2a2a2a; padding-bottom: 16px; margin-bottom: 20px; }
+        .archive-title { color: #0f0; font-size: 14px; margin-bottom: 8px; }
+        .archive-path { color: #666; font-size: 11px; }
+        .profile-card { background: #111; border: 1px solid #2a2a2a; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+        .profile-card-header { background: #1a1a1a; padding: 12px 16px; border-bottom: 1px solid #2a2a2a; display: flex; justify-content: space-between; align-items: center; }
+        .profile-id { color: #ff8200; font-size: 13px; font-weight: bold; }
+        .profile-status { font-size: 11px; color: #666; }
+        .profile-status.active { color: #0f0; }
+        .profile-status.disappeared { color: #ff4444; }
+        .profile-body { padding: 16px; }
+        .profile-row { display: flex; margin-bottom: 12px; font-size: 12px; }
+        .profile-label { width: 100px; color: #666; }
+        .profile-value { color: #ccc; flex: 1; }
+        .profile-value.clue { color: #ff8200; cursor: pointer; }
+        .profile-value.clue:hover { text-decoration: underline; }
+        .meta-data { background: #0a0a0a; border: 1px solid #2a5a2a; }
+        .future-post { background: #1a0a0a; border-color: #ff4444; cursor: pointer; }
+        .future-post .profile-card-header { background: #2a0a0a; }
+        .future-post:hover { border-color: #ff8888; background: #2a0a0a; }
+        .blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+        .command-line { margin-top: 20px; padding-top: 16px; border-top: 1px solid #2a2a2a; font-size: 11px; color: #666; }
+        .cursor { color: #0f0; animation: blink 1s step-end infinite; }
+    </style>
+</head>
+<body>
+<div class="terminal">
+    <div class="terminal-bar">
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-title">encrypted_archive.db — 连接已加密</div>
+        <a href="../../../index.html" class="home-link">🏠 返回入口</a>
+    </div>
+    <div class="terminal-content">
+        <div id="lockScreen" class="lock-screen">
+            <div class="lock-icon">🔒</div>
+            <div class="lock-title">加密档案 · 访问受限</div>
+            <div class="lock-desc">请输入访问密码<br>提示：time+ who is 03</div>
+            <input type="text" id="passwordInput" class="password-input" placeholder="输入密码" autocomplete="off">
+            <br>
+            <button class="unlock-btn" onclick="checkPassword()">解锁</button>
+            <div id="errorMsg" class="error-msg"></div>
+        </div>
+
+        <div id="archiveContent" class="archive-content">
+            <div class="archive-header">
+                <div class="archive-title">╔════════════════════════════════════════╗</div>
+                <div class="archive-title">║   SYSTEM_ARCHIVE_07  —  人格碎片记录    ║</div>
+                <div class="archive-title">╚════════════════════════════════════════╝</div>
+                <div class="archive-path">> /root/arg/personalities/</div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-card-header"><span class="profile-id">[01] 沈叙 — 程序员</span><span class="profile-status disappeared">状态: 已消失</span></div>
+                <div class="profile-body">
+                    <div class="profile-row"><span class="profile-label">最后活跃:</span><span class="profile-value">2025-10-05 16:22:00</span></div>
+                    <div class="profile-row"><span class="profile-label">异常记录:</span><span class="profile-value">不记得写过代码 · commit注释"// who is 03?"</span></div>
+                    <div class="profile-row"><span class="profile-label">外部搜索:</span><span class="profile-value clue" onclick="ClueCollector.add('档案记录：搜索沈叙无结果')">[无结果] 点击记录</span></div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-card-header"><span class="profile-id">[02] 姜莱 — 插画师</span><span class="profile-status">状态: 活跃中</span></div>
+                <div class="profile-body">
+                    <div class="profile-row"><span class="profile-label">最后活跃:</span><span class="profile-value">2025-11-20 14:30:00</span></div>
+                    <div class="profile-row"><span class="profile-label">异常记录:</span><span class="profile-value">不记得画过图 · 小红书自动发笔记</span></div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-card-header"><span class="profile-id">[03] 老韩 — 保安</span><span class="profile-status disappeared">状态: 已消失</span></div>
+                <div class="profile-body">
+                    <div class="profile-row"><span class="profile-label">最后活跃:</span><span class="profile-value">2025-11-01 00:00:00</span></div>
+                    <div class="profile-row"><span class="profile-label">异常记录:</span><span class="profile-value">不记得发过语音 · 微信群自动发消息</span></div>
+                    <div class="profile-row"><span class="profile-label">语音内容:</span><span class="profile-value clue" onclick="ClueCollector.add('档案记录：老韩的语音')">"我不认识这个人" 点击记录</span></div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-card-header"><span class="profile-id">[04] 小远 — 高中生</span><span class="profile-status disappeared">状态: 已消失</span></div>
+                <div class="profile-body">
+                    <div class="profile-row"><span class="profile-label">最后活跃:</span><span class="profile-value">2025-10-30 09:45:00</span></div>
+                    <div class="profile-row"><span class="profile-label">异常记录:</span><span class="profile-value">不记得发过帖子 · 贴吧自动发帖</span></div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-card-header"><span class="profile-id">[05] 程朗 — 心理咨询师</span><span class="profile-status">状态: 消失中</span></div>
+                <div class="profile-body">
+                    <div class="profile-row"><span class="profile-label">最后活跃:</span><span class="profile-value">2025-11-15 11:30:00</span></div>
+                    <div class="profile-row"><span class="profile-label">异常记录:</span><span class="profile-value">不记得写过咨询记录 · 日记自动发布</span></div>
+                    <div class="profile-row"><span class="profile-label">专业分析:</span><span class="profile-value clue" onclick="ClueCollector.add('档案记录：程朗分析多重人格')">"他们可能是同一个人格的不同碎片" 点击记录</span></div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-card-header"><span class="profile-id">[06] 纪时 — 自由撰稿人</span><span class="profile-status">状态: 消失中</span></div>
+                <div class="profile-body">
+                    <div class="profile-row"><span class="profile-label">最后活跃:</span><span class="profile-value">2025-10-25 11:00:00</span></div>
+                    <div class="profile-row"><span class="profile-label">异常记录:</span><span class="profile-value">不记得写过文章 · 公众号自动发布</span></div>
+                    <div class="profile-row"><span class="profile-label">最后留言:</span><span class="profile-value">"你是下一个"</span></div>
+                </div>
+            </div>
+
+            <div class="profile-card meta-data" id="playerCard">
+                <div class="profile-card-header"><span class="profile-id">[07] 调查者 — 你</span><span class="profile-status active">状态: 活跃中</span></div>
+                <div class="profile-body">
+                    <div class="profile-row"><span class="profile-label">首次访问:</span><span class="profile-value" id="firstVisit">加载中...</span></div>
+                    <div class="profile-row"><span class="profile-label">已浏览平台:</span><span class="profile-value" id="visitedPlatforms">加载中...</span></div>
+                    <div class="profile-row"><span class="profile-label">线索收集:</span><span class="profile-value" id="clueCount">加载中...</span></div>
+                </div>
+            </div>
+
+            <!-- 点击这个卡片触发真结局检查 -->
+            <div class="profile-card future-post" id="trueEndingTrigger">
+                <div class="profile-card-header">
+                    <span class="profile-id">⚠️ 预 测 记 录 ⚠️</span>
+                    <span class="profile-status">时间戳: 明天 03:14</span>
+                </div>
+                <div class="profile-body">
+                    <div class="profile-row"><span class="profile-label">预测事件:</span><span class="profile-value">你将发布一篇帖子</span></div>
+                    <div class="profile-row"><span class="profile-label">帖子内容:</span><span class="profile-value">"我不记得自己发过这个。"</span></div>
+                    <div class="profile-row"><span class="profile-label">预测置信度:</span><span class="profile-value blink">99.97%</span></div>
+                    <div class="profile-row"><span class="profile-label">🔐 真结局入口:</span><span class="profile-value" style="color:#ff8200;">点击此卡片，输入密码解锁真相</span></div>
+                </div>
+            </div>
+
+            <div class="command-line">
+                > 档案记录结束<br>
+                > 你正在被记录<br>
+                > <span class="cursor">_</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const CORRECT_PASSWORD = "0314LAOHAN";
+
+    function checkPassword() {
+        let input = document.getElementById('passwordInput').value.trim().toUpperCase();
+        let errorMsg = document.getElementById('errorMsg');
+        
+        if (input === CORRECT_PASSWORD.toUpperCase()) {
+            document.getElementById('lockScreen').style.display = 'none';
+            document.getElementById('archiveContent').style.display = 'block';
+            ClueCollector.add('加密档案已解锁');
+            loadPlayerData();
+        } else {
+            errorMsg.innerText = '密码错误。再试试看。';
+            ClueCollector.add('加密档案密码错误');
+        }
+    }
+
+    function loadPlayerData() {
+        let firstVisit = localStorage.getItem('arg_first_visit');
+        document.getElementById('firstVisit').innerText = firstVisit ? new Date(firstVisit).toLocaleString() : '本次访问';
+        
+        let visited = JSON.parse(localStorage.getItem('arg_visited_platforms') || '[]');
+        let platformNames = { 'weibo':'微博','xiaohongshu':'小红书','tieba':'贴吧','zhihu':'知乎','douban':'豆瓣','gongzhonghao':'公众号','wechat':'微信','encrypted':'加密档案','profile':'07档案' };
+        document.getElementById('visitedPlatforms').innerText = visited.map(v => platformNames[v] || v).join(', ') || '暂无';
+        
+        let clues = ClueCollector ? ClueCollector.getCollected() : [];
+        document.getElementById('clueCount').innerHTML = `<span style="color:#0f0">${clues.length}</span> / 36`;
+    }
+
+    // 真结局触发函数
+    function checkTrueEnding() {
+        let clues = ClueCollector ? ClueCollector.getCollected() : [];
+        let totalNeeded = 36;
+        
+        if (clues.length < totalNeeded) {
+            alert(`⚠️ 线索不足！\n\n当前收集：${clues.length} / ${totalNeeded}\n\n请继续探索各平台，收集更多线索。`);
+            return;
+        }
+        
+        let password = prompt('🔐 请输入密码\n\n提示：who is 06？\n（输入06号人物的名字全拼）');
+        if (password && password.toUpperCase() === 'JISHI') {
+            window.location.href = '../../../endings/true_ending.html';
+        } else if (password) {
+            alert('❌ 密码错误。再试试看。');
+        }
+    }
+    
+    document.getElementById('trueEndingTrigger').addEventListener('click', checkTrueEnding);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!localStorage.getItem('arg_start_time')) {
+            localStorage.setItem('arg_start_time', Date.now().toString());
+        }
+    });
+
+
+</script>
+
+<script src="../../../js/common.js"></script>
+<script src="../../../js/unlock.js"></script>
+<script src="../../../js/meta.js"></script>
+<script src="../../../js/clueCollector.js"></script>
+</body>
+</html>

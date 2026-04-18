@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>真结局 · 觉醒</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 550px;
+            background: #0a0a0a;
+            border: 1px solid #0f0;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,255,0,0.1);
+        }
+        h1 {
+            color: #0f0;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .clue-box {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .clue-title {
+            color: #ff8200;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .clue-items {
+            color: #ccc;
+            font-size: 12px;
+            word-break: break-all;
+            line-height: 1.6;
+        }
+        .code-input {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #2a2a2a;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 16px;
+            text-align: center;
+            margin: 15px 0;
+            outline: none;
+            border-radius: 4px;
+        }
+        .code-input:focus {
+            border-color: #0f0;
+        }
+        .submit-btn {
+            background: #1a1a1a;
+            border: 1px solid #0f0;
+            padding: 10px 24px;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .submit-btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+        .error-msg {
+            color: #ff4444;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .ending-content {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #2a2a2a;
+            display: none;
+            text-align: left;
+        }
+        .ending-content.show {
+            display: block;
+        }
+        .ending-text {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .ending-highlight {
+            color: #0f0;
+            font-weight: bold;
+        }
+        .restart-btn {
+            display: inline-block;
+            margin-top: 20px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 8px 20px;
+            color: #666;
+            font-family: monospace;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .restart-btn:hover {
+            color: #0f0;
+            border-color: #0f0;
+        }
+        .cursor {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>⚠️ 真 结 局 · 觉 醒 ⚠️</h1>
+    <p style="color:#666; font-size:12px; margin-bottom:10px;">你已经拼凑出足够的碎片。输入密码，解锁真相。</p>
+    
+    <div class="clue-box">
+        <div class="clue-title">📋 已收集的线索代码</div>
+        <div class="clue-items" id="clueItems">加载中...</div>
+    </div>
+    
+    <input type="text" class="code-input" id="codeInput" placeholder="输入密码" autocomplete="off">
+    <br>
+    <button class="submit-btn" id="submitBtn">验证</button>
+    <div id="errorMsg" class="error-msg"></div>
+    
+    <div id="endingContent" class="ending-content">
+        <div class="ending-text">
+            <p style="margin-bottom: 15px;">你醒了。</p>
+            
+            <p style="margin-bottom: 15px;">你不是在调查七个人。</p>
+            
+            <p style="margin-bottom: 15px;">你是第八个。</p>
+            
+            <p style="margin-bottom: 15px;">沈叙、姜莱、老韩、小远、程朗、纪时——他们都是你。</p>
+            
+            <p style="margin-bottom: 15px;">你一直在翻自己的旧帖子。</p>
+            
+            <p style="margin-bottom: 15px;">你不记得自己写过这些代码、画过这些画、发过这些语音。</p>
+            
+            <p style="margin-bottom: 15px;">因为那个“你”已经不在了。</p>
+            
+            <p style="margin-bottom: 15px;">每消失一个人格，你就会失去一段记忆。</p>
+            
+            <p style="margin-bottom: 15px;">而你现在正在看着屏幕。</p>
+            
+            <p style="margin-bottom: 15px;"><span class="ending-highlight">下一个消失的，是谁？</span></p>
+            
+            <p style="margin-bottom: 15px; color:#ff8200;">凌晨3:14。你会发一篇帖子。</p>
+            
+            <p style="margin-bottom: 15px;">内容是：“我不记得自己发过这个。”</p>
+            
+            <p style="margin-bottom: 15px;">你已经看到了自己的未来。</p>
+            
+            <p style="margin-bottom: 15px;">但你什么都改变不了。</p>
+            
+            <hr style="border-color:#2a2a2a; margin: 20px 0;">
+            
+            <p style="color:#666; font-size: 11px;">游戏结束。但你的浏览器记录里，多了一个你从未访问过的页面。</p>
+        </div>
+        <a href="../../index.html" class="restart-btn">> 返回入口</a>
+    </div>
+    
+    <div style="margin-top: 20px; color: #333; font-size: 10px;">
+        <span class="cursor">_</span>
+    </div>
+</div>
+
+<script>
+    // 正确的密码：06号人物纪时的名字全拼（不区分大小写）
+    const CORRECT_CODE = "JISHI";
+    
+    // 显示已收集的线索
+    function displayClues() {
+        let clues = [];
+        if (typeof ClueCollector !== 'undefined') {
+            clues = ClueCollector.getCollected();
+        } else {
+            let saved = localStorage.getItem('arg_collected_clues');
+            if (saved) {
+                try {
+                    clues = JSON.parse(saved);
+                } catch(e) {}
+            }
+        }
+        
+        let container = document.getElementById('clueItems');
+        if (!clues || clues.length === 0) {
+            container.innerHTML = '<span style="color:#666;">暂无线索，请返回各平台继续探索</span>';
+        } else {
+            container.innerHTML = clues.map(c => `<span style="display:inline-block;background:#1a1a1a;padding:4px 8px;margin:4px;border-radius:4px;">${c}</span>`).join('');
+        }
+    }
+    
+    // 验证密码（不区分大小写）
+    document.getElementById('submitBtn').addEventListener('click', function() {
+        let inputCode = document.getElementById('codeInput').value.trim().toUpperCase();
+        let errorMsg = document.getElementById('errorMsg');
+        
+        if (inputCode === CORRECT_CODE.toUpperCase()) {
+            errorMsg.innerHTML = '<span style="color:#0f0;">✅ 密码正确。真相正在加载...</span>';
+            
+            setTimeout(() => {
+                document.getElementById('endingContent').classList.add('show');
+                if (typeof ClueCollector !== 'undefined') {
+                    ClueCollector.add('真结局已解锁');
+                }
+                localStorage.setItem('arg_true_ending', 'true');
+            }, 1000);
+        } else {
+            errorMsg.innerHTML = '❌ 密码错误。再仔细看看你收集的线索。';
+            if (typeof ClueCollector !== 'undefined') {
+                ClueCollector.add('真结局密码错误');
+            }
+        }
+    });
+    
+    displayClues();
+    
+    setTimeout(() => {
+        let clues = [];
+        if (typeof ClueCollector !== 'undefined') {
+            clues = ClueCollector.getCollected();
+        }
+        if (!clues || clues.length === 0) {
+            document.getElementById('errorMsg').innerHTML = '<span style="color:#ff8200;">⚠️ 你还没有收集任何线索。请返回各个平台，点击可疑的内容收集线索。</span>';
+        }
+    }, 500);
+    
+
+</script>
+
+<script src="../../js/clueCollector.js"></script>
+</body>
+</html>

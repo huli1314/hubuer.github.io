@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>07 — 你</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #1a1a1a;
+            padding: 16px 20px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #ff8200;
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .home-link {
+            color: #0f0;
+            font-size: 13px;
+            text-decoration: none;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .info-card {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .card-title {
+            background: #1a1a1a;
+            padding: 10px 16px;
+            color: #0f0;
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+
+        .info-label {
+            width: 100px;
+            color: #666;
+        }
+
+        .info-value {
+            color: #ccc;
+            flex: 1;
+            word-break: break-all;
+        }
+
+        .future-card {
+            border-color: #ff4444;
+            background: #1a0a0a;
+        }
+
+        .future-card .card-title {
+            background: #2a0a0a;
+            color: #ff4444;
+        }
+
+        .warning {
+            color: #ff4444;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        .ending-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .ending-btn {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 12px;
+            color: #ccc;
+            font-family: monospace;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .ending-btn:hover {
+            background: #2a2a2a;
+        }
+
+        .ending-btn.post-btn {
+            border-color: #ff8200;
+            color: #ff8200;
+        }
+        .ending-btn.post-btn:hover {
+            background: #ff8200;
+            color: #000;
+        }
+
+        .ending-btn.auto-btn {
+            border-color: #ffaa00;
+            color: #ffaa00;
+        }
+        .ending-btn.auto-btn:hover {
+            background: #ffaa00;
+            color: #000;
+        }
+
+        .ending-btn.delete-btn {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+        .ending-btn.delete-btn:hover {
+            background: #ff4444;
+            color: #000;
+        }
+
+        .blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <a href="../../index.html" class="home-link">🏠 返回入口</a>
+        <h1>🆔 07 号 档 案</h1>
+        <div style="width: 60px;"></div>
+    </div>
+    <div class="content">
+        <div class="info-card">
+            <div class="card-title">> 身份信息</div>
+            <div class="card-body">
+                <div class="info-row"><span class="info-label">编号:</span><span class="info-value">07</span></div>
+                <div class="info-row"><span class="info-label">称呼:</span><span class="info-value" id="playerName">调查者</span></div>
+                <div class="info-row"><span class="info-label">首次访问:</span><span class="info-value" id="firstVisit">加载中...</span></div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="card-title">> 浏览记录</div>
+            <div class="card-body">
+                <div class="info-row"><span class="info-label">已访问平台:</span><span class="info-value" id="visitedPlatforms">加载中...</span></div>
+                <div class="info-row"><span class="info-label">点击次数:</span><span class="info-value" id="clickCount">加载中...</span></div>
+                <div class="info-row"><span class="info-label">线索收集:</span><span class="info-value" id="clueCount">加载中...</span></div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="card-title">> 搜索历史</div>
+            <div class="card-body">
+                <div class="info-row"><span class="info-label">最近搜索:</span><span class="info-value" id="searchHistory">暂无</span></div>
+            </div>
+        </div>
+
+        <div class="info-card future-card">
+            <div class="card-title">⚠️ 预 测 记 录 ⚠️</div>
+            <div class="card-body">
+                <div class="info-row"><span class="info-label">预测时间:</span><span class="info-value blink">明天 03:14:00</span></div>
+                <div class="info-row"><span class="info-label">预测事件:</span><span class="info-value">你将发布一篇帖子</span></div>
+                <div class="info-row"><span class="info-label">帖子内容:</span><span class="info-value" id="futurePost">"我不记得自己发过这个。"</span></div>
+                <div class="warning">⚠️ 无论你是否主动发布，该帖子都会出现 ⚠️</div>
+            </div>
+        </div>
+
+        <!-- 三个结局触发按钮 -->
+        <div class="ending-buttons">
+            <div class="ending-btn post-btn" id="postBtn">📱 主动发帖（触发结局1）</div>
+            <div class="ending-btn auto-btn" id="autoBtn">💤 什么都不做（触发结局2）</div>
+            <div class="ending-btn delete-btn" id="deleteBtn">🗑️ 删除档案（触发结局3）</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadPlayerData() {
+        let firstVisit = localStorage.getItem('arg_first_visit');
+        if (firstVisit) {
+            document.getElementById('firstVisit').innerText = new Date(firstVisit).toLocaleString();
+        } else {
+            document.getElementById('firstVisit').innerText = '本次访问';
+        }
+        
+        let visited = JSON.parse(localStorage.getItem('arg_visited_platforms') || '[]');
+        let platformNames = {
+            'weibo': '微博', 'xiaohongshu': '小红书', 'tieba': '贴吧',
+            'zhihu': '知乎', 'douban': '豆瓣', 'gongzhonghao': '公众号',
+            'wechat': '微信', 'encrypted': '加密档案', 'profile': '07档案'
+        };
+        let visitedDisplay = visited.map(v => platformNames[v] || v).join(', ') || '暂无';
+        document.getElementById('visitedPlatforms').innerText = visitedDisplay;
+        
+        let clicks = JSON.parse(localStorage.getItem('arg_debug_clicks') || '[]');
+        document.getElementById('clickCount').innerText = clicks.length + ' 次';
+        
+        let clues = ClueCollector ? ClueCollector.getCollected() : [];
+        document.getElementById('clueCount').innerText = clues.length + ' 个';
+        
+        let searches = JSON.parse(localStorage.getItem('arg_searches') || '[]');
+        document.getElementById('searchHistory').innerText = searches.slice(-5).join(', ') || '暂无';
+    }
+    
+    // 结局1：主动发帖
+    function triggerPostEnding() {
+        if (confirm('⚠️ 你确定要发布帖子吗？\n\n发布后游戏将结束，所有线索会丢失。')) {
+            window.location.href = '../../endings/you_posted.html';
+        }
+    }
+    
+    // 结局2：什么都不做（自动发帖）
+    function triggerAutoEnding() {
+        if (confirm('⚠️ 你确定什么都不做吗？\n\n明天凌晨3:14，你的账号会自动发帖。')) {
+            window.location.href = '../../endings/auto_posted.html';
+        }
+    }
+    
+    // 结局3：删除档案
+    function triggerDeleteEnding() {
+        if (confirm('⚠️ 删除档案后，你的所有记录将被清除。你确定吗？')) {
+            window.location.href = '../../endings/deleted.html';
+        }
+    }
+    
+    document.getElementById('postBtn').addEventListener('click', triggerPostEnding);
+    document.getElementById('autoBtn').addEventListener('click', triggerAutoEnding);
+    document.getElementById('deleteBtn').addEventListener('click', triggerDeleteEnding);
+    
+    if (typeof ClueCollector !== 'undefined') {
+        ClueCollector.add('访问了07号档案');
+    }
+    
+    loadPlayerData();
+    
+
+</script>
+
+<script src="../../js/common.js"></script>
+<script src="../../js/unlock.js"></script>
+<script src="../../js/meta.js"></script>
+<script src="../../js/clueCollector.js"></script>
+</body>
+</html>

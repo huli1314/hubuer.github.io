@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>ARG · 入口</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0a;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            padding: 40px;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            background: #0d0d0d;
+            box-shadow: 0 0 20px rgba(0,255,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header pre {
+            color: #0f0;
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+        .header p {
+            color: #0f0;
+            font-size: 14px;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 30px 0;
+        }
+        .links a {
+            color: #0f0;
+            text-decoration: none;
+            padding: 10px 15px;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .links a:not(.disabled):hover {
+            background: #1a1a1a;
+            border-color: #0f0;
+            padding-left: 20px;
+        }
+        .links a.disabled {
+            color: #3a3a3a;
+            border-color: #1a1a1a;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .separator {
+            border-top: 1px solid #2a2a2a;
+            margin: 20px 0;
+        }
+        .cursor {
+            color: #0f0;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .footer {
+            color: #3a3a3a;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .locked-badge {
+            font-size: 10px;
+            margin-left: 8px;
+            color: #ff4444;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <pre>
+╔══════════════════════════════════╗
+║                                  ║
+║   你 不 记 得 自 己 是 怎 么 来 的   ║
+║                                  ║
+║   但 你 已 经 在 这 里 了          ║
+║                                  ║
+╚══════════════════════════════════╝
+        </pre>
+        <p>>> 系统已记录你的访问 &lt;&lt;</p>
+    </div>
+
+    <div class="links" id="linksContainer">
+        <!-- 初始6个平台，直接可进 -->
+        <a href="pages/platform/weibo/index.html" data-platform="weibo">📱 微 博</a>
+        <a href="pages/platform/xiaohongshu/index.html" data-platform="xiaohongshu">📷 小 红 书</a>
+        <a href="pages/platform/tieba/index.html" data-platform="tieba">📌 贴 吧</a>
+        <a href="pages/platform/zhihu/index.html" data-platform="zhihu">❓ 知 乎</a>
+        <a href="pages/platform/douban/index.html" data-platform="douban">📚 豆 瓣</a>
+        <a href="pages/platform/gongzhonghao/index.html" data-platform="gongzhonghao">📰 公 众 号</a>
+        
+        <div class="separator"></div>
+        
+        <!-- 需要解锁的3个 - 初始为禁用状态 -->
+        <a href="javascript:void(0)" data-platform="wechat" class="disabled" id="wechatLink">💬 微 信 业 主 群 <span class="locked-badge">[锁定]</span></a>
+        <a href="javascript:void(0)" data-platform="encrypted" class="disabled" id="encryptedLink">🔐 加 密 档 案 <span class="locked-badge">[锁定]</span></a>
+        <a href="javascript:void(0)" data-platform="profile" class="disabled" id="profileLink">🆔 07 号 档 案 <span class="locked-badge">[锁定]</span></a>
+        
+        <div class="separator"></div>
+        <a href="pages/tools/timeline.html">⏱️ 时 间 线 工 具</a>
+    </div>
+
+    <div class="footer">
+        <span class="cursor">_</span>
+    </div>
+</div>
+
+<script>
+    // 检查解锁状态
+    function checkUnlocks() {
+        // 微信业主群：浏览过任意3个不同平台后解锁
+        let visitedPlatforms = JSON.parse(localStorage.getItem('arg_visited_platforms') || '[]');
+        if (visitedPlatforms.length >= 3) {
+            let wechatLink = document.getElementById('wechatLink');
+            if (wechatLink && wechatLink.classList.contains('disabled')) {
+                wechatLink.classList.remove('disabled');
+                wechatLink.setAttribute('href', 'pages/platform/wechat/index.html');
+                let badge = wechatLink.querySelector('.locked-badge');
+                if (badge) badge.remove();
+            }
+        }
+        
+        // 加密档案：发现过3:14时间线重叠后解锁（从localStorage读取）
+        let discoveredOverlap = localStorage.getItem('arg_discovered_overlap') === 'true';
+        if (discoveredOverlap) {
+            let encryptedLink = document.getElementById('encryptedLink');
+            if (encryptedLink && encryptedLink.classList.contains('disabled')) {
+                encryptedLink.classList.remove('disabled');
+                encryptedLink.setAttribute('href', 'pages/platform/encrypted/index.html');
+                let badge = encryptedLink.querySelector('.locked-badge');
+                if (badge) badge.remove();
+            }
+        }
+        
+        // 07档案：浏览过所有6个初始平台后解锁
+        let allInitial = ['weibo', 'xiaohongshu', 'tieba', 'zhihu', 'douban', 'gongzhonghao'];
+        let hasAll = allInitial.every(p => visitedPlatforms.includes(p));
+        if (hasAll) {
+            let profileLink = document.getElementById('profileLink');
+            if (profileLink && profileLink.classList.contains('disabled')) {
+                profileLink.classList.remove('disabled');
+                profileLink.setAttribute('href', 'pages/player/profile.html');
+                let badge = profileLink.querySelector('.locked-badge');
+                if (badge) badge.remove();
+            }
+        }
+    }
+    
+    // 初始化
+    checkUnlocks();
+    
+    // 每隔1秒检查一次（其他页面切换回来时更新）
+    setInterval(checkUnlocks, 1000);
+    
+    console.log('[入口] 锁定链接无法点击，需要满足解锁条件');
+</script>
+</body>
+</html>

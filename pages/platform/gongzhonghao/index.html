@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>公众号 · 纪时</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .gz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+        }
+        .top-nav {
+            background: #fff;
+            border-bottom: 1px solid #e6e6e6;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .back-btn {
+            font-size: 20px;
+            cursor: pointer;
+            color: #07c160;
+        }
+        .logo {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+        .menu-btn {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .home-link {
+            cursor: pointer;
+            color: #07c160;
+            font-size: 14px;
+            margin-right: 12px;
+            text-decoration: none;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+        .profile-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .profile-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #ddd;
+            overflow: hidden;
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-info {
+            flex: 1;
+        }
+        .profile-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        .profile-desc {
+            font-size: 12px;
+            color: #999;
+        }
+        .follow-btn {
+            background: #07c160;
+            color: #fff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .article-area {
+            padding: 16px;
+        }
+        .article-card {
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border: 1px solid #f0f0f0;
+        }
+        .article-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .article-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        .article-meta {
+            font-size: 12px;
+            color: #999;
+        }
+        .article-cover {
+            width: 100%;
+            max-height: 300px;
+            overflow: hidden;
+        }
+        .article-cover img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+        .article-content {
+            padding: 16px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+        }
+        .article-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+            color: #999;
+        }
+        .action-btn {
+            cursor: pointer;
+        }
+        .comment-section {
+            border-top: 1px solid #f0f0f0;
+            background: #fafafa;
+            display: none;
+        }
+        .comment-section.show {
+            display: block;
+        }
+        .comment-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 10px;
+        }
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ddd;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .comment-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .comment-content {
+            flex: 1;
+        }
+        .comment-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+        .comment-text {
+            font-size: 13px;
+            color: #555;
+            margin-top: 4px;
+        }
+        .comment-time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .watching-section {
+            padding: 12px 16px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 12px;
+            color: #999;
+            display: none;
+        }
+        .watching-section.show {
+            display: block;
+        }
+        .timestamp-0314 {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        .disappeared {
+            background: #fafafa;
+            opacity: 0.7;
+        }
+        .clue-trigger {
+            cursor: pointer;
+        }
+        .clue-trigger:hover {
+            background: #f0f0f0;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+<div class="gz-container">
+    <div class="top-nav">
+        <div style="display: flex; align-items: center;">
+            <a href="../../../index.html" class="home-link">🏠 返回入口</a>
+            <span class="back-btn" onclick="history.back()">←</span>
+        </div>
+        <span class="logo">纪时写字的地方</span>
+        <span class="menu-btn">⋯</span>
+    </div>
+    <div class="profile-bar">
+        <div class="profile-avatar"><img src="../../../assets/images/avatars/jishi.jpg" alt="纪时"></div>
+        <div class="profile-info">
+            <div class="profile-name">纪时写字的地方</div>
+            <div class="profile-desc">自由撰稿人 · 记录生活与思考</div>
+        </div>
+        <button class="follow-btn" onclick="ClueCollector.add('关注公众号：纪时写字的地方')">关注</button>
+    </div>
+    <div class="article-area">
+        <div class="article-card">
+            <div class="article-header">
+                <div class="article-title">关于写作的一些随想</div>
+                <div class="article-meta">2023-01-10 20:00 · 阅读 234</div>
+            </div>
+            <div class="article-content">写作对我来说是一种自我对话的方式。有时候写着写着，会发现一些自己都没意识到的东西。这可能就是文字的魅力吧。</div>
+            <div class="article-footer">
+                <span>❤️ 12</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.comment-section').classList.toggle('show')">💬 留言(3)</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.watching-section').classList.toggle('show')">👀 在看(5)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="读者"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">读者A</div>
+                        <div class="comment-text">写得真好</div>
+                        <div class="comment-time">2023-01-10 21:30</div>
+                    </div>
+                </div>
+            </div>
+            <div class="watching-section"><span>读者B、读者C 等5人</span></div>
+        </div>
+
+        <div class="article-card">
+            <div class="article-header">
+                <div class="article-title">我不记得自己写过这篇文章</div>
+                <div class="article-meta">2024-06-15 22:30 · 阅读 567</div>
+            </div>
+            <div class="article-content">今天打开公众号后台，发现昨晚发布了一篇文章。文章内容我很陌生，但文风确实像我的。发布时间是凌晨3:14。那个时间我在睡觉。有人遇到过类似情况吗？</div>
+            <div class="article-footer">
+                <span>❤️ 45</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.comment-section').classList.toggle('show')">💬 留言(28)</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.watching-section').classList.toggle('show')">👀 在看(12)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="读者"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">读者B</div>
+                        <div class="comment-text">会不会是被盗号了？</div>
+                        <div class="comment-time">2024-06-15 23:00</div>
+                    </div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">沈叙Shen</div>
+                        <div class="comment-text">我也遇到过。GitHub自动push代码，也是3:14。</div>
+                        <div class="comment-time">2024-06-16 09:15</div>
+                    </div>
+                </div>
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('纪时公众号自动发文，沈叙姜莱也遇到同样情况')">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/jianglei.jpg" alt="姜莱"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">姜莱插画</div>
+                        <div class="comment-text">我也是。小红书自动发了一篇笔记。</div>
+                        <div class="comment-time">2024-06-16 10:00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="watching-section"><span>沈叙Shen、姜莱插画 等12人</span></div>
+        </div>
+
+        <div class="article-card">
+            <div class="article-header">
+                <div class="article-title"><span class="timestamp-0314">凌晨3:14</span> 我不记得自己发过这个</div>
+                <div class="article-meta">2025-01-15 03:14 · 阅读 1.2k</div>
+            </div>
+            <div class="article-content">我不记得自己发过这条。但公众号后台显示是我发的。发布时间是3:14。我不知道这意味着什么。如果你在看这篇文章，请记住：我叫纪时。我是一名自由撰稿人。我好像正在消失。</div>
+            <div class="article-footer">
+                <span>❤️ 234</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.comment-section').classList.toggle('show')">💬 留言(67)</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.watching-section').classList.toggle('show')">👀 在看(45)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/shenxu.jpg" alt="沈叙"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">沈叙Shen</div>
+                        <div class="comment-text">我也发了同样的内容。3:14。</div>
+                        <div class="comment-time">2025-01-15 03:16</div>
+                    </div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/jianglei.jpg" alt="姜莱"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">姜莱插画</div>
+                        <div class="comment-text">小红书也是3:14。到底怎么回事？</div>
+                        <div class="comment-time">2025-01-15 03:18</div>
+                    </div>
+                </div>
+                <div class="comment-item">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/xiaoyuan.jpg" alt="小远"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">小远不是远</div>
+                        <div class="comment-text">贴吧也是。韩叔也是。</div>
+                        <div class="comment-time">2025-01-15 03:20</div>
+                    </div>
+                </div>
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('所有人凌晨3:14同步发帖，程朗分析是同一人格')">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/chenglang.jpg" alt="程朗"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">程朗心理</div>
+                        <div class="comment-text">你们所有人都在同一时间发了同样的内容。作为心理咨询师，我建议你们画一个时间线对比。我怀疑你们是同一个人的不同人格。</div>
+                        <div class="comment-time">2025-01-15 09:30</div>
+                    </div>
+                </div>
+            </div>
+            <div class="watching-section"><span>沈叙Shen、姜莱插画、小远不是远、程朗心理 等45人</span></div>
+        </div>
+
+        <div class="article-card">
+            <div class="article-header">
+                <div class="article-title">我搜不到自己了</div>
+                <div class="article-meta">2025-08-20 14:30 · 阅读 345</div>
+            </div>
+            <div class="article-content">今天在百度搜了自己的名字"纪时"。没有结果。我让朋友帮忙搜，也说没有。我好像从世界上消失了。但我还在这里写文章。这到底是什么感觉？人格解体？还是我真的不存在？</div>
+            <div class="article-footer">
+                <span>❤️ 56</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.comment-section').classList.toggle('show')">💬 留言(23)</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.watching-section').classList.toggle('show')">👀 在看(8)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item clue-trigger" onclick="ClueCollector.add('搜索纪时的名字无结果')">
+                    <div class="comment-avatar"><img src="../../../assets/images/avatars/default.jpg" alt="匿名"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">匿名</div>
+                        <div class="comment-text">沈叙已经消失了。你也快了。下一个可能是姜莱。</div>
+                        <div class="comment-time">2025-08-21 10:00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="watching-section"><span>程朗心理、匿名 等8人</span></div>
+        </div>
+
+        <div class="article-card">
+            <div class="article-header">
+                <div class="article-title">如果你看到这条，请记住我</div>
+                <div class="article-meta">2025-10-25 11:00 · 阅读 89</div>
+            </div>
+            <div class="article-content">我叫纪时。我是一名自由撰稿人。我不记得自己写过最后那篇文章。如果你看到这条消息，请记住我。我觉得自己正在消失。下一个可能是你。去查一下凌晨3:14。去看时间线。你会发现我们所有人都是同一个人。你是下一个。</div>
+            <div class="article-footer">
+                <span>❤️ 23</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.comment-section').classList.toggle('show')">💬 留言(5)</span>
+                <span class="action-btn" onclick="this.closest('.article-card').querySelector('.watching-section').classList.toggle('show')">👀 在看(2)</span>
+            </div>
+            <div class="comment-section">
+                <div class="comment-item">
+                    <div class="comment-avatar"></div>
+                    <div class="comment-content">
+                        <div class="comment-name">系统提示</div>
+                        <div class="comment-text">—— 该用户已注销，无法留言 ——</div>
+                        <div class="comment-time">2025-10-26 00:00</div>
+                    </div>
+                </div>
+            </div>
+            <div class="watching-section"><span>—— 最后一条 ——</span></div>
+        </div>
+
+        <div class="article-card disappeared">
+            <div class="article-header">
+                <div class="article-title" style="color:#999;">⚠️ 该账号已被注销</div>
+                <div class="article-meta">最后活跃：3个月前</div>
+            </div>
+            <div class="article-content" style="color:#999;">根据微信公众号平台规定，该账号因长期未登录已进入注销流程。所有文章已归档。</div>
+            <div class="article-footer">
+                <span>❤️ --</span>
+                <span>💬 留言已关闭</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showToast(msg) {
+        let toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+</script>
+<script src="../../../js/common.js"></script>
+<script src="../../../js/unlock.js"></script>
+<script src="../../../js/meta.js"></script>
+<script src="../../../js/clueCollector.js"></script>
+</body>
+</html>

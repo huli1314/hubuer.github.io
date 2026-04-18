@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>结局 · 你发帖了</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #000;
+            font-family: 'Courier New', Courier, monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            background: #0a0a0a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            color: #ff4444;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .post-box {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .post-time {
+            color: #ff4444;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .post-content {
+            color: #ccc;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .message {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #1a0a0a;
+            border: 1px solid #ff4444;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 16px 0;
+            color: #ff8888;
+            font-size: 12px;
+        }
+        .restart-btn {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 10px 24px;
+            color: #0f0;
+            font-family: monospace;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .restart-btn:hover {
+            background: #0f0;
+            color: #000;
+        }
+        .cursor {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📱 你 发 帖 了</h1>
+    <div class="post-box">
+        <div class="post-time">2026-04-19 03:14:00</div>
+        <div class="post-content">“我不记得自己发过这个。”</div>
+    </div>
+    <div class="warning-box">
+        ⚠️ 你主动发布了帖子。<br>
+        所有已收集的线索已丢失。<br>
+        你需要重新开始调查。
+    </div>
+    <div class="message">
+        凌晨3:14，你的社交账号自动发布了一篇帖子。<br><br>
+        你不记得自己发过。<br><br>
+        你的朋友发来消息：“你怎么了？”<br><br>
+        你打了几个字，又删掉了。<br><br>
+        你说：“我不知道。”<br><br>
+        <span style="color:#ff4444;">但你心里知道。</span>
+    </div>
+    <a href="../../index.html" class="restart-btn">> 重新开始</a>
+    <div style="margin-top: 20px; color: #333; font-size: 11px;">
+        <span class="cursor">_</span>
+    </div>
+</div>
+<script>
+    // 坏结局：重置所有线索
+    localStorage.removeItem('arg_collected_clues');
+    localStorage.removeItem('arg_clues');
+    localStorage.removeItem('arg_visited_platforms');
+    localStorage.removeItem('arg_debug_clicks');
+    localStorage.removeItem('arg_searches');
+    localStorage.removeItem('arg_discovered_overlap');
+    localStorage.removeItem('arg_true_ending');
+    // 保留首次访问时间和开始时间，让玩家知道来过
+    // 记录结局
+    localStorage.setItem('arg_ending', 'you_posted');
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>时间线工具 · 对比碎片</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0f0;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .home-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #0f0;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: #0d0d1a;
+            border: 1px solid #2a2a3e;
+            padding: 8px 20px;
+            color: #ccc;
+            font-family: monospace;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .control-btn:hover {
+            background: #0f0;
+            color: #000;
+            border-color: #0f0;
+        }
+
+        .timeline-grid {
+            display: flex;
+            gap: 2px;
+            background: #0d0d1a;
+            border: 1px solid #2a2a3e;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        .time-column {
+            min-width: 80px;
+            background: #11111a;
+            border-right: 1px solid #2a2a3e;
+        }
+
+        .time-header {
+            padding: 10px;
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            border-bottom: 1px solid #2a2a3e;
+            background: #0a0a12;
+        }
+
+        .time-header.highlight {
+            background: #2a2a0a;
+            color: #ff8200;
+            font-weight: bold;
+        }
+
+        .character-row {
+            border-bottom: 1px solid #2a2a3e;
+        }
+
+        .character-name {
+            padding: 8px 10px;
+            font-size: 12px;
+            color: #0f0;
+            background: #0a0a12;
+            border-bottom: 1px solid #2a2a3e;
+        }
+
+        .post-cell {
+            padding: 6px 8px;
+            font-size: 10px;
+            color: #ccc;
+            border-bottom: 1px solid #2a2a3e;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .post-cell:hover {
+            background: #1a1a2e;
+        }
+
+        .post-cell.selected {
+            background: #2a2a0a;
+            border-left: 2px solid #ff8200;
+        }
+
+        .post-cell.highlight-0314 {
+            background: #3a0a0a;
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .post-detail {
+            background: #0d0d1a;
+            border: 1px solid #2a2a3e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .detail-title {
+            color: #0f0;
+            font-size: 14px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #2a2a3e;
+            padding-bottom: 8px;
+        }
+
+        .detail-content {
+            color: #ccc;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .detail-time {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .discovery {
+            margin-top: 20px;
+            padding: 16px;
+            background: #0a1a0a;
+            border: 1px solid #0f0;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .discovery.show {
+            display: block;
+        }
+
+        .discovery h3 {
+            color: #0f0;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .discovery p {
+            color: #ccc;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0,0,0,0.8);
+            color: #0f0;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+            border: 1px solid #0f0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="../../index.html" class="home-link">🏠 返回入口</a>
+    <div class="header">
+        <h1>⏱️ 时 间 线 对 比 工 具</h1>
+        <p>点击帖子标记可疑时间点，找出重叠规律</p>
+    </div>
+
+    <div class="controls">
+        <button class="control-btn" onclick="showAllPosts()">显示全部</button>
+        <button class="control-btn" onclick="showOnly0314()">只显示 03:14 帖子</button>
+        <button class="control-btn" onclick="clearSelection()">清除选中</button>
+        <button class="control-btn" onclick="analyzeOverlap()">分析重叠</button>
+    </div>
+
+    <div id="timelineGrid" class="timeline-grid"></div>
+
+    <div id="postDetail" class="post-detail" style="display: none;">
+        <div class="detail-title" id="detailTitle"></div>
+        <div class="detail-content" id="detailContent"></div>
+        <div class="detail-time" id="detailTime"></div>
+    </div>
+
+    <div id="discovery" class="discovery">
+        <h3>⚠️ 发现异常 ⚠️</h3>
+        <p id="discoveryText"></p>
+    </div>
+</div>
+
+<script>
+    const posts = [
+        { character: "沈叙", time: "2023-01-12 14:23:00", content: "新项目上线，连续肝了三天，代码终于跑通了。", platform: "微博", is0314: false },
+        { character: "沈叙", time: "2024-03-18 09:47:00", content: "GitHub发现凌晨3:14我push了一段代码，不记得写过。", platform: "微博", is0314: true, clue: "沈叙的代码注释：// who is 03?" },
+        { character: "沈叙", time: "2025-01-15 03:14:00", content: "我不记得自己发过这条。", platform: "微博", is0314: true, clue: "凌晨3:14所有人同步发帖" },
+        { character: "沈叙", time: "2025-10-05 16:22:00", content: "GitHub三个月没更新，同事说没见过我。", platform: "微博", is0314: false },
+        { character: "姜莱", time: "2023-02-10 15:30:00", content: "新画的猫咪系列", platform: "小红书", is0314: false },
+        { character: "姜莱", time: "2024-04-02 09:15:00", content: "不记得画过这张图", platform: "小红书", is0314: false },
+        { character: "姜莱", time: "2025-01-15 03:14:00", content: "我不记得自己发过这个。", platform: "小红书", is0314: true, clue: "凌晨3:14所有人同步发帖" },
+        { character: "姜莱", time: "2025-11-20 14:30:00", content: "请记住我叫姜莱", platform: "小红书", is0314: false },
+        { character: "老韩", time: "2023-03-12 10:00:00", content: "东门快递柜维修", platform: "微信", is0314: false },
+        { character: "老韩", time: "2024-05-18 22:00:00", content: "监控视频不记得录过", platform: "微信", is0314: false },
+        { character: "老韩", time: "2025-01-15 03:14:00", content: "我不记得自己发过这个。", platform: "微信", is0314: true, clue: "凌晨3:14所有人同步发帖" },
+        { character: "老韩", time: "2025-11-01 00:00:00", content: "最后一条语音", platform: "微信", is0314: false },
+        { character: "小远", time: "2023-02-20 19:30:00", content: "最近有点失眠", platform: "贴吧", is0314: false },
+        { character: "小远", time: "2024-04-10 22:15:00", content: "账号自动发帖", platform: "贴吧", is0314: false },
+        { character: "小远", time: "2025-01-15 03:14:00", content: "我不记得自己发过这个。", platform: "贴吧", is0314: true, clue: "凌晨3:14所有人同步发帖" },
+        { character: "小远", time: "2025-10-30 09:45:00", content: "请记住我叫小远", platform: "贴吧", is0314: false },
+        { character: "程朗", time: "2023-01-15 20:30:00", content: "关于存在与焦虑的思考", platform: "豆瓣", is0314: false },
+        { character: "程朗", time: "2024-05-20 22:15:00", content: "奇怪的来访者沈叙", platform: "豆瓣", is0314: false },
+        { character: "程朗", time: "2025-01-15 03:14:00", content: "我不记得自己发过这个。", platform: "豆瓣", is0314: true, clue: "凌晨3:14所有人同步发帖" },
+        { character: "程朗", time: "2025-11-15 11:30:00", content: "如果你在看，请记住我", platform: "豆瓣", is0314: false },
+        { character: "纪时", time: "2023-01-10 20:00:00", content: "关于写作的随想", platform: "公众号", is0314: false },
+        { character: "纪时", time: "2024-06-15 22:30:00", content: "不记得写过文章", platform: "公众号", is0314: false },
+        { character: "纪时", time: "2025-01-15 03:14:00", content: "我不记得自己发过这个。", platform: "公众号", is0314: true, clue: "凌晨3:14所有人同步发帖" },
+        { character: "纪时", time: "2025-10-25 11:00:00", content: "你是下一个", platform: "公众号", is0314: false }
+    ];
+
+    let selectedPosts = [];
+
+    function getTimeGroups() {
+        let times = [...new Set(posts.map(p => p.time.split(' ')[0]))];
+        return times.sort();
+    }
+
+    function getCharacters() {
+        return [...new Set(posts.map(p => p.character))];
+    }
+
+    function renderTimeline(filter0314 = false) {
+        let characters = getCharacters();
+        let timeGroups = getTimeGroups();
+        
+        let html = '<div class="time-column"><div class="time-header">角色/时间</div>';
+        for (let char of characters) {
+            html += `<div class="character-name">${char}</div>`;
+        }
+        html += '</div>';
+        
+        for (let time of timeGroups) {
+            let is0314Time = time.includes('03:14') || time.includes('03:14:00');
+            html += `<div class="time-column"><div class="time-header ${is0314Time ? 'highlight' : ''}">${time}</div>`;
+            
+            for (let char of characters) {
+                let postAtTime = posts.find(p => p.character === char && p.time.startsWith(time));
+                if (postAtTime) {
+                    if (filter0314 && !postAtTime.is0314) {
+                        html += `<div class="post-cell" style="opacity:0.3;">—</div>`;
+                    } else {
+                        let isSelected = selectedPosts.includes(postAtTime);
+                        let is0314Class = postAtTime.is0314 ? 'highlight-0314' : '';
+                        html += `<div class="post-cell ${is0314Class} ${isSelected ? 'selected' : ''}" onclick="selectPost(${posts.indexOf(postAtTime)})">📄</div>`;
+                    }
+                } else {
+                    html += `<div class="post-cell" style="opacity:0.3;">—</div>`;
+                }
+            }
+            html += '</div>';
+        }
+        
+        document.getElementById('timelineGrid').innerHTML = html;
+    }
+
+    function selectPost(index) {
+        let post = posts[index];
+        if (selectedPosts.includes(post)) {
+            selectedPosts = selectedPosts.filter(p => p !== post);
+        } else {
+            selectedPosts.push(post);
+        }
+        
+        let detailDiv = document.getElementById('postDetail');
+        detailDiv.style.display = 'block';
+        document.getElementById('detailTitle').innerHTML = `${post.character} · ${post.platform}`;
+        document.getElementById('detailContent').innerHTML = post.content;
+        document.getElementById('detailTime').innerHTML = post.time;
+        
+        if (post.clue) {
+            ClueCollector.add(post.clue);
+            showToast('🔍 线索已收集: ' + post.clue);
+        }
+        
+        renderTimeline();
+    }
+
+    function analyzeOverlap() {
+        let times = {};
+        for (let post of posts) {
+            let timeKey = post.time.split(' ')[0] + ' ' + post.time.split(' ')[1];
+            if (!times[timeKey]) times[timeKey] = [];
+            times[timeKey].push(post.character);
+        }
+        
+        let overlaps = [];
+        for (let [time, chars] of Object.entries(times)) {
+            if (chars.length >= 3) {
+                overlaps.push({ time, count: chars.length, characters: chars });
+            }
+        }
+        
+        let discoveryDiv = document.getElementById('discovery');
+        let discoveryText = document.getElementById('discoveryText');
+        
+        if (overlaps.length > 0) {
+            let found0314 = overlaps.find(o => o.time.includes('03:14'));
+            if (found0314) {
+                discoveryText.innerHTML = `发现 ${found0314.count} 个人在 ${found0314.time} 同时发帖。<br><br>他们分别是：${found0314.characters.join('、')}<br><br>这不是巧合。他们可能是同一个人。`;
+                discoveryDiv.classList.add('show');
+                ClueCollector.add('时间线重叠：凌晨3:14所有人同时发帖');
+                localStorage.setItem('arg_discovered_overlap', 'true');
+            } else {
+                discoveryText.innerHTML = `发现重叠时间点：${overlaps.map(o => `${o.time}(${o.count}人)`).join('、')}`;
+                discoveryDiv.classList.add('show');
+            }
+        } else {
+            discoveryText.innerHTML = '未发现明显的时间重叠。继续标记更多帖子试试。';
+            discoveryDiv.classList.add('show');
+            setTimeout(() => discoveryDiv.classList.remove('show'), 3000);
+        }
+        
+        renderTimeline();
+    }
+
+    function showAllPosts() {
+        renderTimeline(false);
+    }
+
+    function showOnly0314() {
+        renderTimeline(true);
+    }
+
+    function clearSelection() {
+        selectedPosts = [];
+        renderTimeline();
+        document.getElementById('postDetail').style.display = 'none';
+    }
+
+    function showToast(msg) {
+        let toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    renderTimeline();
+
+</script>
+
+<script src="../../js/common.js"></script>
+<script src="../../js/unlock.js"></script>
+<script src="../../js/meta.js"></script>
+<script src="../../js/clueCollector.js"></script>
+</body>
+</html>
